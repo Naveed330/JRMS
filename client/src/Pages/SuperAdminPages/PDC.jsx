@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Table from 'react-bootstrap/Table';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import { Col, Row } from 'react-bootstrap';
+import SideBar from '../../Components/SideBar';
 
 const PDC = () => {
     const [tenantData, setTenantData] = useState([]);
@@ -22,6 +24,9 @@ const PDC = () => {
     const handleEdit = (tenantId, check) => {
         setEditData({ tenantId, check });
         setShowModal(true);
+        setPaymentAmount(check.amount.toString());
+        setCheckOrInvoice(check.checkNumber);
+        setPaymentDate(new Date(check.date).toISOString().split('T')[0]);
     };
 
     const handleModalClose = () => {
@@ -32,12 +37,12 @@ const PDC = () => {
         // Prepare updated payment data
         const updatedPaymentData = {
             paymentmethod: paymentMethod,
-            paymentstatus: 'pending', // Assuming payment status needs to be set
-            amount: paymentAmount,
-            date: paymentDate, // Include payment date
+            paymentstatus: 'pending',
+            amount: parseFloat(paymentAmount),
+            date: paymentDate,
             checkorinvoice: checkOrInvoice
         };
-
+    
         // Send PUT request to update payment information
         fetch(`/api/tenants/${editData.tenantId}/pdc/${editData.check._id}/payments`, {
             method: 'PUT',
@@ -54,62 +59,75 @@ const PDC = () => {
         })
         .then(data => {
             console.log('Payment information updated successfully:', data);
-            // Update tenantData state to reflect changes
-            const updatedTenantData = tenantData.map(tenant => {
-                if (tenant._id === editData.tenantId) {
-                    const updatedPDC = tenant.contractInfo.pdc.filter(pdc => pdc._id !== editData.check._id);
-                    return {
-                        ...tenant,
-                        contractInfo: {
-                            ...tenant.contractInfo,
-                            pdc: updatedPDC
-                        }
-                    };
-                }
-                return tenant;
-            });
-            setTenantData(updatedTenantData);
+            
+            // Fetch all tenants again to update the tenantData state
+            return fetch('/api/tenants/alltenants');
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Update tenantData state with new data
+            setTenantData(data);
             setShowModal(false);
         })
         .catch(error => console.error('Error updating payment information:', error));
     };
+    
     return (
-        <div>
-            <h1>PDC Information</h1>
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Property Name</th>
-                        <th>Floor Name</th>
-                        <th>Unit Name</th>
-                        <th>PDC Information</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {tenantData.map(tenant => (
-                        tenant.contractInfo.pdc.map((check, index) => (
-                            <tr key={`${tenant._id}-${index}`}>
-                                {index === 0 && (
-                                    <>
-                                        <td rowSpan={tenant.contractInfo.pdc.length}>{tenant.name}</td>
-                                        <td rowSpan={tenant.contractInfo.pdc.length}>{tenant.property[0].name}</td>
-                                        <td rowSpan={tenant.contractInfo.pdc.length}>{tenant.floorId.name}</td>
-                                        <td rowSpan={tenant.contractInfo.pdc.length}>{tenant.unitId.name}</td>
-                                    </>
-                                )}
-                                <td>Check Number: {check.checkNumber}</td>
-                                <td>Bank: {check.bank}</td>
-                                <td>Date: {new Date(check.date).toLocaleDateString()}</td>
-                                <td>Amount: {check.amount}</td>
-                                <td>
-                                    <button onClick={() => handleEdit(tenant._id, check)}>Edit</button>
-                                </td>
-                            </tr>
-                        ))
-                    ))}
-                </tbody>
-            </Table>
+        <>
+            <Row>
+                <Col xs={6} sm={6} md={3} lg={2} xl={2}>
+                    <div>
+                        <SideBar />
+                    </div>
+                </Col>
+
+                <Col xs={12} sm={12} md={12} lg={10} xl={10} style={{ marginTop: '90px' }} >
+                    <Row xs={1} md={2} lg={3}>
+                        <Col xs={12} sm={12} md={12} lg={10} xl={10} >
+                            <h2 className='text-center'>PDC Information</h2>
+                            <Table striped bordered hover responsive >
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Property Name</th>
+                                        <th>Floor Name</th>
+                                        <th>Unit Name</th>
+                                        <th>PDC Information</th>
+                                        <th>Bank</th>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {tenantData.map(tenant => (
+                                        tenant.contractInfo.pdc.map((check, index) => (
+                                            <tr key={`${tenant._id}-${index}`}>
+                                                {index === 0 && (
+                                                    <>
+                                                        <td rowSpan={tenant.contractInfo.pdc.length}>{tenant.name || tenant.companyname}</td>
+                                                        <td rowSpan={tenant.contractInfo.pdc.length}>{tenant.property.length > 0 ? tenant.property[0].name || tenant.property[0].buildingname : 'N/A'}</td>
+                                                        <td rowSpan={tenant.contractInfo.pdc.length}>{tenant.floorId ? tenant.floorId.name : 'N/A'}</td>
+                                                        <td rowSpan={tenant.contractInfo.pdc.length}>{tenant.unitId.length > 0 ? tenant.unitId[0].unitNo : 'N/A'}</td>
+                                                    </>
+                                                )}
+                                                <td>{check.checkNumber && check.checkNumber}</td>
+                                                <td>{check.bank}</td>
+                                                <td>{new Date(check.date).toLocaleDateString()}</td>
+                                                <td>{check.amount}</td>
+                                                <td>
+                                                    <Button onClick={() => handleEdit(tenant._id, check)}>Pay Now</Button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ))}
+                                </tbody>
+                            </Table>
+                        </Col>
+                    </Row>
+                </Col>
+
+            </Row>
 
             {/* Modal for Editing */}
             <Modal show={showModal} onHide={handleModalClose}>
@@ -117,34 +135,46 @@ const PDC = () => {
                     <Modal.Title>Edit PDC Information</Modal.Title>
                 </Modal.Header>
 
-                <Modal.Body>
-                    {/* Form for editing */}
-                    <label>Select Payment By:</label>
-                    <select value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)}>
-                        <option value="bank">Bank</option>
-                        <option value="cash">Cash</option>
-                    </select>
-                    <br />
-                    <label>Amount:</label>
-                    <input type="text" value={paymentAmount} onChange={e => setPaymentAmount(e.target.value)} />
-                    <br />
-                    <label>Date:</label>
-                    <input type="date" value={paymentDate} onChange={e => setPaymentDate(e.target.value)} />
-                    <br />
-                    <label>Check / Invoice:</label>
-                    <input type="text" value={checkOrInvoice} onChange={e => setCheckOrInvoice(e.target.value)} />
-                </Modal.Body>
+                <form>
+                    <Modal.Body>
 
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleModalClose}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={handleSave}>
-                        Save Changes
-                    </Button>
-                </Modal.Footer>
+                        <div>
+                            <label>Select Payment By:</label>
+                            <select value={paymentMethod} className='w-100 py-2' style={{  border: '1px solid #ebedf2' }} onChange={e => setPaymentMethod(e.target.value)}>
+                                <option value="bank">Bank</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Amount:</label>
+                            <input type="text" value={paymentAmount} className="form-control" onChange={e => setPaymentAmount(e.target.value)} />
+                        </div>
+
+                        <div>
+                            <label>Date:</label>
+                            <input type="date" value={paymentDate} className="form-control" onChange={e => setPaymentDate(e.target.value)} />
+                        </div>
+
+                        <div>
+
+                            <label>Check / Invoice:</label>
+                            <input type="text" value={checkOrInvoice} className="form-control" onChange={e => setCheckOrInvoice(e.target.value)} />
+                        </div>
+
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleModalClose}>
+                            Close
+                        </Button>
+                        <Button variant="primary" onClick={handleSave}>
+                            Save Changes
+                        </Button>
+                    </Modal.Footer>
+                </form>
             </Modal>
-        </div>
+        </>
     );
 };
 

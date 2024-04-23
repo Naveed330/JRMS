@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../AuthContext';
-import { Button, Row, Col, } from 'react-bootstrap'; // Import Bootstrap components
+import { Button, Card, Col, Row } from 'react-bootstrap';
 import SideBar from '../../Components/SideBar';
 
 function AddProperty() {
     const { state } = useContext(AuthContext);
     const [formData, setFormData] = useState({
         name: '',
+        cname: '',
+        ccontact: '',
+        cemail: '',
         userId: '',
         address: '',
         status: 'enable',
@@ -22,36 +25,50 @@ function AddProperty() {
         plotAddress: '',
         onwaniAddress: '',
         propertyNo: '',
-        propertyRegistrationNo: ''
+        propertyRegistrationNo: '',
+        city: '',
+        area: '',
+        bondtype: '',
+        bondno: '',
+        bonddate: '',
+        govermentalno: '',
+        pilotno: '',
+        buildingname: '',
+        nameandstreet: '',
+        propertytype: '',
+        description: '',
+        propertyno: '',
     });
 
     const [owners, setOwners] = useState([]);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedZone, setSelectedZone] = useState('');
 
+    const handleZoneChange = (e) => {
+        setSelectedZone(e.target.value);
+    };
     useEffect(() => {
-        // Fetch all owners from the API
         axios.get('/api/users/all-owners', {
             headers: {
                 Authorization: `Bearer ${state.user.token}`
             }
         })
             .then(response => {
-                console.log(response.data); // Check the data received from the API
                 setOwners(response.data);
             })
             .catch(error => {
-                console.error('Failed to fetch owners:', error);
                 setError('Failed to fetch owners');
+                console.error('Failed to fetch owners:', error);
             });
     }, [state.user.token]);
 
     const handleChange = e => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
+        setFormData(prevState => ({
+            ...prevState,
             [name]: value
-        });
+        }));
     };
 
     const handleImageChange = e => {
@@ -86,19 +103,30 @@ function AddProperty() {
                 propertyType: '',
                 contactinfo: '',
                 image: null,
-                municipality: '',
                 zone: '',
+                municipality: '',
                 sector: '',
                 roadName: '',
                 plotNo: '',
                 plotAddress: '',
                 onwaniAddress: '',
                 propertyNo: '',
-                propertyRegistrationNo: ''
+                propertyRegistrationNo: '',
+                city: '',
+                area: '',
+                bondtype: '',
+                bondno: '',
+                bonddate: '',
+                govermentalno: '',
+                pilotno: '',
+                buildingname: '',
+                nameandstreet: '',
+                propertytype: '',
+                description: ''
             });
         } catch (error) {
-            console.error('Error adding property:', error);
             setError('Error adding property');
+            console.error('Error adding property:', error);
         } finally {
             setIsLoading(false);
         }
@@ -113,100 +141,294 @@ function AddProperty() {
                     </div>
                 </Col>
 
+                <Col xs={12} sm={12} md={12} lg={10} xl={10} style={{ marginTop: '90px' }} >
+                    <Row xs={1} md={2} lg={3}>
+                        <Col xs={12} sm={12} md={12} lg={10} xl={10}  >
 
-                <Col xs={12} sm={12} md={12} lg={10} xl={10} style={{ marginTop: '70px' }} >
-                    <Row xs={1} md={2} lg={3} className="mb-5">
-                        <Col>
-                            <div className="card py-3 " style={{ width: '90rem', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
-                                <div className="card-body">
+                            <h1 className='text-center'>Add Property</h1>
+                            <form onSubmit={handleSubmit} className='py-2 px-5' style={{ backgroundColor: 'white', borderRadius: '20px' }}>
+                                <div className="row">
+                                    <Col xs={12} sm={12} md={12} lg={12} xl={12}>
+                                        <Card style={{ boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }} >
+                                            <Card.Body>
+                                                <Card.Title>Select Property</Card.Title>
+                                                <div className="row" >
+                                                    <div className="mb-3 col-md-3">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Emirates</label>
+                                                        <select style={{ borderRadius: '10px' }} className="form-control py-3" name="zone" value={formData.zone} onChange={(e) => { handleChange(e); handleZoneChange(e); }}>
+                                                            <option value="">Select Zone</option>
+                                                           
+                                                            <option value="AbuDhabi">Abu Dhabi</option>
+                                                            <option value="Sharjah">Sharjah</option> 
+                                                            <option value="Ajman">Ajman</option> 
+                                                             <option value="RasAlKhaimah">Ras Al Khaimah </option> 
+                                                             <option value="Fujairah">Fujairah</option> 
+                                                            <option value="UmmAlQuwain">Umm Al Quwain</option> 
+                                                             <option value="Dubai">Dubai</option> 
+                                                        </select>
+                                                    </div>
 
-                                    <h1 className='text-center'>Add Property</h1>
-                                    <form onSubmit={handleSubmit} className='py-2 px-5' style={{ backgroundColor: 'white', borderRadius: '20px' }}>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Name:</label>
-                                            <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Owner:</label>
-                                            <select className="form-control p-3" name="userId" value={formData.userId} onChange={handleChange}>
-                                                <option value="">Select Owner</option>
-                                                {owners.map(owner => (
-                                                    <option key={owner._id} value={owner._id}>{owner.name}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Address:</label>
-                                            <input type="text" className="form-control" name="address" value={formData.address} onChange={handleChange} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Status:</label>
-                                            <select className="form-control py-3" name="status" value={formData.status} onChange={handleChange}>
-                                                <option value="enable">Enable</option>
-                                                <option value="disable">Disable</option>
-                                            </select>
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Contact Info:</label>
-                                            <input type="text" className="form-control" name="contactinfo" value={formData.contactinfo} onChange={handleChange} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Property Type:</label>
-                                            <select className="form-control py-3" name="propertyType" value={formData.propertyType} onChange={handleChange}>
-                                                <option value="">Select Property Type</option>
-                                                <option value="apartments">Apartments</option>
-                                            </select>
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Municipality:</label>
-                                            <input type="text" className="form-control" name="municipality" value={formData.municipality} onChange={handleChange} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Zone:</label>
-                                            <input type="text" className="form-control" name="zone" value={formData.zone} onChange={handleChange} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Sector:</label>
-                                            <input type="text" className="form-control" name="sector" value={formData.sector} onChange={handleChange} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Road Name:</label>
-                                            <input type="text" className="form-control" name="roadName" value={formData.roadName} onChange={handleChange} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Plot No:</label>
-                                            <input type="text" className="form-control" name="plotNo" value={formData.plotNo} onChange={handleChange} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Plot Address:</label>
-                                            <input type="text" className="form-control" name="plotAddress" value={formData.plotAddress} onChange={handleChange} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Onwani Address:</label>
-                                            <input type="text" className="form-control" name="onwaniAddress" value={formData.onwaniAddress} onChange={handleChange} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Property No:</label>
-                                            <input type="text" className="form-control" name="propertyNo" value={formData.propertyNo} onChange={handleChange} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Property Registration No:</label>
-                                            <input type="text" className="form-control" name="propertyRegistrationNo" value={formData.propertyRegistrationNo} onChange={handleChange} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Image:</label>
-                                            <input type="file" className="form-control" accept="image/*" onChange={handleImageChange} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <Button variant="primary" type="submit" disabled={isLoading}>
-                                                {isLoading ? 'Adding Property...' : 'Add Property'}
-                                            </Button>
-                                        </div>
-                                    </form>
+                                                    {/* {selectedZone === 'AbuDhabi' && (
+                                                    <> */}
+                                                    <div className="mb-3 col-md-3" >
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Municipality</label>
+                                                        <input style={{ borderRadius: '10px' }} type="text" className="form-control" name="municipality" value={formData.municipality} onChange={handleChange} />
+                                                    </div>
 
-                                    {error && <p className="text-danger">{error}</p>}
+                                                    <div className="mb-3 col-md-3">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Owner Name</label>
+                                                        <select style={{ borderRadius: '10px' }} className="form-control p-3" name="userId" value={formData.userId} onChange={handleChange}>
+                                                            <option value="">Select Owner</option>
+                                                            {owners.map(owner => (
+                                                                <option key={owner._id} value={owner._id}>{owner.name}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+
+                                                    <div className="mb-3 col-md-3">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}> Property Name</label>
+                                                        <input style={{ borderRadius: '10px' }} type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} />
+                                                    </div>
+
+                                                    <div className="mb-3 col-md-3">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Property Type</label>
+                                                        <select style={{ borderRadius: '10px' }} className="form-control py-3" name="propertyType" value={formData.propertyType} onChange={handleChange}>
+                                                            <option value="">Select Property Type</option>
+                                                            <option value="apartments">Apartments</option>
+                                                            <option value="apartments">Villas</option>
+                                                            <option value="apartments">Town House</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+
+                                    <Col xs={12} sm={12} md={12} lg={12} xl={12}>
+                                        <Card style={{ boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }} className='mt-4' >
+                                            <Card.Body>
+                                                <Card.Title>Contact Details</Card.Title>
+                                                <div className='row' >
+                                                    <div className="mb-3 col-md-3">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Contact Person Name </label>
+                                                        <input style={{ borderRadius: '10px' }} type="text" className="form-control" name="cname" value={formData.cname} onChange={handleChange} />
+                                                    </div>
+
+                                                    <div className="mb-3 col-md-3">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Contact Email </label>
+                                                        <input style={{ borderRadius: '10px' }} type="text" className="form-control" name="cemail" value={formData.cemail} onChange={handleChange} />
+                                                    </div>
+                                                    <div className="mb-3 col-md-3">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Contact Person Mobile</label>
+                                                        <input style={{ borderRadius: '10px' }} type="text" className="form-control" name="ccontact" value={formData.ccontact} onChange={handleChange} />
+                                                    </div>
+
+                                                    <div className="mb-3 col-md-3">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Address</label>
+                                                        <input style={{ borderRadius: '10px' }} type="text" className="form-control" name="address" value={formData.address} onChange={handleChange} />
+                                                    </div>
+                                                </div>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+
+                                    <Col xs={12} sm={12} md={12} lg={12} xl={12}>
+                                        <Card style={{ boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }} className='mt-4' >
+                                            <Card.Body>
+                                                <Card.Title>property Address</Card.Title>
+                                                <div className='row' >
+
+                                                    <div className="mb-3 col-md-3">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Sector</label>
+                                                        <input style={{ borderRadius: '10px' }} type="text" className="form-control" name="sector" value={formData.sector} onChange={handleChange} />
+                                                    </div>
+                                                    <div className="mb-3 col-md-3">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Road Name</label>
+                                                        <input style={{ borderRadius: '10px' }} type="text" className="form-control" name="roadName" value={formData.roadName} onChange={handleChange} />
+                                                    </div>
+                                                    <div className="mb-3 col-md-3">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Plot No.</label>
+                                                        <input style={{ borderRadius: '10px' }} type="text" className="form-control" name="plotNo" value={formData.plotNo} onChange={handleChange} />
+                                                    </div>
+                                                    <div className="mb-3 col-md-3">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Plot Address</label>
+                                                        <input style={{ borderRadius: '10px' }} type="text" className="form-control" name="plotAddress" value={formData.plotAddress} onChange={handleChange} />
+                                                    </div>
+                                                    <div className="mb-3 col-md-3">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Onwani Address</label>
+                                                        <input style={{ borderRadius: '10px' }} type="text" className="form-control" name="onwaniAddress" value={formData.onwaniAddress} onChange={handleChange} />
+                                                    </div>
+                                                    <div className="mb-4 col-md-3">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Property No</label>
+                                                        <input style={{ borderRadius: '10px' }} type="text" className="form-control" name="propertyNo" value={formData.propertyNo} onChange={handleChange} />
+                                                    </div>
+                                                    <div className="mb-3 col-md-3" >
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Property Registration No</label>
+                                                        <input style={{ borderRadius: '10px' }} type="text" className="form-control" name="propertyRegistrationNo" value={formData.propertyRegistrationNo} onChange={handleChange} />
+                                                    </div>
+                                                </div>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+
+                                    <Col xs={12} sm={12} md={12} lg={12} xl={12}>
+                                        <Card style={{ boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }} className='mt-4' >
+                                            <Card.Body>
+                                                <Card.Title>Status</Card.Title>
+                                                <div className='row' >
+                                                    <div className="mb-3 col-md-6">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Status</label>
+                                                        <select style={{ borderRadius: '10px' }} className="form-control py-3" name="status" value={formData.status} onChange={handleChange}>
+                                                            <option value="enable">Enable</option>
+                                                            <option value="disable">Disable</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div className="mb-3 col-md-6">
+                                                        <label className="form-label" style={{ fontWeight: '500' }}>Image:</label>
+                                                        <input style={{ borderRadius: '10px' }} type="file" className="form-control" accept="image/*" onChange={handleImageChange} />
+                                                    </div>
+                                                </div>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+
+                                    <div className="mt-4">
+                                        <Button variant="primary" type="submit" disabled={isLoading}>
+                                            {isLoading ? 'Adding Property...' : 'Add Property'}
+                                        </Button>
+                                    </div>
+
+
+
+
+                                    {/* <div className="mb-3 col-md-6">
+                                                    <label className="form-label" style={{ fontWeight: 'bold' }}>Owner:</label>
+                                                    <select className="form-control p-3" name="userId" value={formData.userId} onChange={handleChange}>
+                                                        <option value="">Select Owner</option>
+                                                        {owners.map(owner => (
+                                                            <option key={owner._id} value={owner._id}>{owner.name}</option>
+                                                        ))}
+                                                    </select>
+                                                </div> */}
+
+                                    {/* <div className="mb-3 col-md-6">
+                                        <label className="form-label" style={{ fontWeight: 'bold' }}>Status</label>
+                                        <select className="form-control py-3" name="status" value={formData.status} onChange={handleChange}>
+                                            <option value="enable">Enable</option>
+                                            <option value="disable">Disable</option>
+                                        </select>
+                                    </div> */}
+
+                                    {/* <div className="mb-3 col-md-6">
+                                                    <label className="form-label" style={{ fontWeight: 'bold' }}>Property Type:</label>
+                                                    <select className="form-control py-3" name="propertyType" value={formData.propertyType} onChange={handleChange}>
+                                                        <option value="">Select Property Type</option>
+                                                        <option value="apartments">Apartments</option>
+                                                    </select>
+                                                </div> */}
+
+
+                                    {/* {selectedZone === 'Sharjah' && (
+                                                    <>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>City </label>
+                                                            <input type="text" className="form-control" name="city" value={formData.city} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Area </label>
+                                                            <input type="text" className="form-control" name="area" value={formData.area} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Bond Type:</label>
+                                                            <input type="text" className="form-control" name="bondtype" value={formData.bondtype} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Bond No:</label>
+                                                            <input type="text" className="form-control" name="bondno" value={formData.bondno} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Bond Date:</label>
+                                                            <input type="date" className="form-control" name="bonddate" value={formData.bonddate} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Governmental No:</label>
+                                                            <input type="text" className="form-control" name="govermentalno" value={formData.govermentalno} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Pilot No:</label>
+                                                            <input type="text" className="form-control" name="pilotno" value={formData.pilotno} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Building Name:</label>
+                                                            <input type="text" className="form-control" name="buildingname" value={formData.buildingname} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Name and Street:</label>
+                                                            <input type="text" className="form-control" name="nameandstreet" value={formData.nameandstreet} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Property Type:</label>
+                                                            <input type="text" className="form-control" name="propertytype" value={formData.propertytype} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Description</label>
+                                                            <input type="text" className="form-control" name="description" value={formData.description} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Property No </label>
+                                                            <input type="text" className="form-control" name="propertyno" value={formData.propertyno} onChange={handleChange} />
+                                                        </div>
+                                                    </>
+                                                )} */}
+
+
+                                    {/* {selectedZone === 'AbuDhabi' && (
+                                                    <>
+
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Name:</label>
+                                                            <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Zone</label>
+                                                            <input type="text" className="form-control" name="municipality" value={formData.municipality} onChange={handleChange} />
+                                                        </div>
+
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Sector:</label>
+                                                            <input type="text" className="form-control" name="sector" value={formData.sector} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Road Name:</label>
+                                                            <input type="text" className="form-control" name="roadName" value={formData.roadName} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Plot No:</label>
+                                                            <input type="text" className="form-control" name="plotNo" value={formData.plotNo} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Plot Address:</label>
+                                                            <input type="text" className="form-control" name="plotAddress" value={formData.plotAddress} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Onwani Address:</label>
+                                                            <input type="text" className="form-control" name="onwaniAddress" value={formData.onwaniAddress} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6">
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Property No:</label>
+                                                            <input type="text" className="form-control" name="propertyNo" value={formData.propertyNo} onChange={handleChange} />
+                                                        </div>
+                                                        <div className="mb-3 col-md-6" >
+                                                            <label className="form-label" style={{ fontWeight: 'bold' }}>Property Registration No:</label>
+                                                            <input type="text" className="form-control" name="propertyRegistrationNo" value={formData.propertyRegistrationNo} onChange={handleChange} />
+                                                        </div>
+                                                    </>
+                                                )} */}
+
                                 </div>
-                            </div>
+                            </form>
+                            {error && <p className="text-danger">{error}</p>}
                         </Col>
                     </Row>
                 </Col>
@@ -216,6 +438,3 @@ function AddProperty() {
 }
 
 export default AddProperty;
-
-
-

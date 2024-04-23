@@ -62,16 +62,16 @@ const Login = () => {
   return (
     <div className="container-scroller">
       <div className="container-fluid page-body-wrapper full-page-wrapper">
-        <div className="content-wrapper d-flex align-items-center auth">
-          <div className="row flex-grow">
+        <div className="content-wrapper d-flex align-items-center auth" style={{}}  >
+          <div className="row flex-grow"  >
             <div className="col-lg-4 mx-auto">
               <div className="auth-form-light text-left p-5">
-                <div className="brand-logo">
+                <div className="brand-logo"  >
                   {/* <img src="../../assets/images/logo.svg" /> */}
                   <h2 style={{ color: '#AE82CE' }} >JRMS</h2>
                 </div>
                 <h4>Hello! let's get started</h4>
-                <h6 style={{ color: '#979dac' }}>Sign in to continue.</h6>
+                <h6 className="font-weight-light">Sign in to continue.</h6>
                 <form className="pt-3" onSubmit={handleSubmit(onSubmit)}>
                   <div className="form-group">
                     <input

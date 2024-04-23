@@ -48,7 +48,7 @@ const Profile = () => {
         formData.append('picture', newPicture);
       }
 
-      const response = await axios.put(`/api/users/profile`, formData, {
+      const response = await axios.put('/api/users/profile', formData, {
         headers: {
           Authorization: `Bearer ${state.user.token}`,
           'Content-Type': 'multipart/form-data',

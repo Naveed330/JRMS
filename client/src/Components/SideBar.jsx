@@ -1,12 +1,16 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { AuthContext } from '../Pages/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
-
+import { Dropdown } from 'react-bootstrap';
 const SideBar = () => {
   const { state, logout } = useContext(AuthContext);
+  const [showPropertiesDropdown, setShowPropertiesDropdown] = useState(false);
 
+  const handlePropertiesDropdownToggle = () => {
+    setShowPropertiesDropdown(!showPropertiesDropdown);
+  };
   return (
-    <nav className="sidebar sidebar-offcanvas mt-2" id="sidebar" style={{  height: 'auto' }} >
+    <nav className="sidebar sidebar-offcanvas mt-4" id="sidebar">
       <ul className="nav mt-2">
         <li className="nav-item nav-profile mt-5">
           <Link to="/superadmindashboard" className="nav-link">
@@ -24,7 +28,7 @@ const SideBar = () => {
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/register">
-            <span className="menu-title">Register New User</span>
+            <span className="menu-title">Add Owner OR User</span>
             <i className="mdi mdi-home menu-icon" />
           </Link>
         </li>
@@ -43,25 +47,33 @@ const SideBar = () => {
 
 
         </li>
-
-        <li className="nav-item">
-          <Link className="nav-link" to="/addunit">
-            <span className="menu-title">Unit Section</span>
-            <i className="mdi mdi-contacts menu-icon" />
-          </Link>
-        </li>
         <li className="nav-item">
           <Link className="nav-link" to="/addproperty">
             <span className="menu-title">Add Property</span>
             <i className="mdi mdi-format-list-bulleted menu-icon" />
           </Link>
         </li>
+
         <li className="nav-item">
           <Link className="nav-link" to="/allproperties">
             <span className="menu-title">All Properties</span>
             <i className="mdi mdi-format-list-bulleted menu-icon" />
           </Link>
         </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/addfloor">
+            <span className="menu-title">Floor Section</span>
+            <i className="mdi mdi-format-list-bulleted menu-icon" />
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/addunit">
+            <span className="menu-title">Unit Section</span>
+            <i className="mdi mdi-contacts menu-icon" />
+          </Link>
+        </li>
+
+
         <li className="nav-item">
           <Link className="nav-link" to="/addtenant">
             <span className="menu-title">Add Tenant</span>
@@ -109,6 +121,34 @@ const SideBar = () => {
           </Link>
 
         </li>
+        <li className="nav-item">
+          <Link
+            className="nav-link"
+            data-bs-toggle="collapse"
+            to="/addmaintenancecost"
+            aria-expanded="false"
+            aria-controls="general-pages"
+          >
+            <span className="menu-title">Add Maintenance Cost</span>
+            <i className="menu-arrow" />
+            <i className="mdi mdi-medical-bag menu-icon" />
+          </Link>
+
+        </li>
+        <li className="nav-item">
+          <Link
+            className="nav-link"
+            data-bs-toggle="collapse"
+            to="/maintenancelist"
+            aria-expanded="false"
+            aria-controls="general-pages"
+          >
+            <span className="menu-title">All Maintenance Record</span>
+            <i className="menu-arrow" />
+            <i className="mdi mdi-medical-bag menu-icon" />
+          </Link>
+
+        </li>
         <li className="nav-item sidebar-actions">
           <span className="nav-link">
             <div className="border-bottom">
@@ -127,13 +167,16 @@ const SideBar = () => {
             </ul>
           </div> */}
 
+
           </span>
         </li>
       </ul>
     </nav>
-
-
   )
 }
 
 export default SideBar
+
+
+
+

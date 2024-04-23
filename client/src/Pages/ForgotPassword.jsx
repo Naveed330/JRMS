@@ -7,8 +7,6 @@ import Container from 'react-bootstrap/Container';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import forgotpassword from '../assets/forgotpassword.png'
-import forgotlogo from '../assets/forgotlogo.png'
 import 'react-toastify/dist/ReactToastify.css';
 
 const ForgotPassword = () => {
@@ -41,55 +39,36 @@ const ForgotPassword = () => {
 
   const handleCancel = () => {
     // Navigate to /login when clicking Cancel
-    navigate('/');
+    navigate('/login');
   };
 
   return (
-
-    <>
-      <div style={{ display: 'flex', marginTop: '10% ', justifyContent: 'space-evenly', alignItems: 'center' }} >
-
-        <div>
-          <img src={forgotpassword} alt="forgotpassword" style={{ width: '100%' }} />
+  
+    <Container className="pt-8">
+      <div className="border p-4 mx-auto my-5 shadow-sm" style={{ maxWidth: 400 }}>
+        <div className="h4 bold text-center text-uppercase">
+          <span className="text-primary">Reset</span> Password
         </div>
-        <div className="border py-5 px-3 my-5 shadow-sm">
-
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <img src={forgotlogo} alt="forgotlogo" style={{ width: '100px' }} />
-          </div>
-
-          <div className="h4 bold text-center text-uppercase mt-4" style={{ fontWeight: 'bold' }}>
-            Reset Password
-          </div>
-          <div>
-            <p style={{ color: '#979dac', textAlign: 'center' }} >Enter your email to reset your password</p>
-          </div>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Form.Group className="mb-3 mt-4">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Enter email"
-                {...register('email', { required: true })}
-              />
-              {errors.email && <p className="text-danger">Email is required.</p>}
-            </Form.Group>
-            <div className='mt-4' style={{ display: 'flex', justifyContent: 'center', gap: '5px' }} >
-              <Button variant="success" type="submit" disabled={isLoading}>
-                {isLoading ? <Spinner animation="border" size="sm" /> : 'Reset Password'}
-              </Button>
-              <Button variant="outline-secondary" type="button" onClick={handleCancel}>
-                Back to Login
-              </Button>
-
-            </div>
-          </form>
-
-
-        </div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Form.Group className="mb-3">
+            <Form.Label>Email address</Form.Label>
+            <Form.Control
+              type="email"
+              placeholder="Enter email"
+              {...register('email', { required: true })}
+            />
+            {errors.email && <p className="text-danger">Email is required.</p>}
+          </Form.Group>
+          <Button variant="success" type="submit" disabled={isLoading}>
+            {isLoading ? <Spinner animation="border" size="sm" /> : 'Reset Password'}
+          </Button>{" "}
+          <Button variant="outline-secondary" type="button" onClick={handleCancel}>
+            Cancel
+          </Button>
+        </form>
       </div>
-    </>
-
+    </Container>
+   
   );
 };
 

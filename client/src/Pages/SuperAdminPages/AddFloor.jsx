@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../AuthContext';
-import { Table, Button, Modal, Form } from 'react-bootstrap';
+import { Table, Button, Modal, Form, Row, Col } from 'react-bootstrap';
+import SideBar from '../../Components/SideBar';
+import { AiOutlineDelete } from "react-icons/ai";
+import { FiEdit } from "react-icons/fi";
+import { GrAdd } from "react-icons/gr";
+import Floorsearch from '../../Components/FloorSearch'
+
 
 const AddFloor = () => {
   const { state } = useContext(AuthContext);
@@ -13,10 +19,19 @@ const AddFloor = () => {
   const [editFloorName, setEditFloorName] = useState('');
   const [editFloorId, setEditFloorId] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [show, setShow] = useState(false);
+  const [selectedApartmentIdForDelete, setSelectedApartmentIdForDelete] = useState('');
+  const [selectedFloorIdForDelete, setSelectedFloorIdForDelete] = useState('');
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  console.log(apartments, 'apartments');
 
   const fetchApartments = async () => {
     try {
-      const response = await axios.get('/api/properties/allproperties', {
+      const response = await axios.get(`/api/properties/allproperties`, {
         headers: {
           Authorization: `Bearer ${state.user.token}`
         }
@@ -50,28 +65,31 @@ const AddFloor = () => {
       });
       console.log('Floor added:', response.data);
       setShowModal(false);
-      // Fetch apartments again after adding floor
       fetchApartments();
     } catch (error) {
       console.error('Error adding floor:', error);
-      // Handle error 
     }
   };
 
-  const handleDeleteFloor = async (apartmentId, floorId) => {
+  const handleDeleteFloor = async () => {
     try {
-      await axios.delete(`/api/properties/floor/${apartmentId}/deleteFloor/${floorId}`, {
+      await axios.delete(`/api/properties/floor/${selectedApartmentIdForDelete}/deleteFloor/${selectedFloorIdForDelete}`, {
         headers: {
           Authorization: `Bearer ${state.user.token}`
         }
       });
-      // Fetch apartments again after deleting floor
       fetchApartments();
+      setShowDeleteModal(false); // Close the delete modal after successful deletion
     } catch (error) {
       console.error('Error deleting floor:', error);
-      // Handle error 
     }
   };
+
+  const handleOpenDeleteModal = (apartmentId, floorId) => {
+    setSelectedApartmentIdForDelete(apartmentId);
+    setSelectedFloorIdForDelete(floorId);
+    setShowDeleteModal(true);
+  }
 
   const handleOpenEditModal = (floorId, floorName) => {
     setEditFloorId(floorId);
@@ -88,11 +106,9 @@ const AddFloor = () => {
       });
       console.log('Floor edited:', response.data);
       setShowEditModal(false);
-      // Fetch apartments again after editing floor
       fetchApartments();
     } catch (error) {
       console.error('Error editing floor:', error);
-      // Handle error 
     }
   };
 
@@ -103,53 +119,108 @@ const AddFloor = () => {
 
   return (
     <div>
-      <h2>Floor Section of Apartments</h2>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Name of Apartment</th>
-            <th>Address</th>
-            <th>Floors</th>
-            <th>Delete Floor</th>
-            <th>Edit Floor</th>
-            <th>Add Floor</th>
-          </tr>
-        </thead>
-        <tbody>
-          {apartments.map(apartment => (
-            <tr key={apartment._id}>
-              <td>{apartment.name}</td>
-              <td>{apartment.address}</td>
-              <td>
-                {apartment.floors.map(floor => (
-                  <div key={floor._id}>
-                    {floor.name}
-                  </div>
-                ))}
-              </td>
-              <td>
-                {apartment.floors.map(floor => (
-                  <div key={floor._id}>
-                    <Button variant="danger" size="sm" onClick={() => handleDeleteFloor(apartment._id, floor._id)}>Delete</Button>
-                  </div>
-                ))}
-              </td>
-              <td>
-                {apartment.floors.map(floor => (
-                  <div key={floor._id}>
-                    <Button variant="primary" size="sm" onClick={() => handleOpenEditModal(floor._id, floor.name)}>Edit</Button>
-                  </div>
-                ))}
-              </td>
-              <td>
-                <Button variant="primary" onClick={() => openModal(apartment._id)}>Add Floor</Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <Row>
+        <Col xs={6} sm={6} md={3} lg={2} xl={2}>
+          <div>
+            <SideBar />
+          </div>
+        </Col>
 
-    
+        <Col xs={12} sm={12} md={12} lg={10} xl={10} style={{ marginTop: '80px' }} >
+          <Row xs={1} md={2} lg={3}>
+            <Col xs={12} sm={12} md={12} lg={10} xl={10} >
+
+              <h2 className='text-center mt-3'>Floor Section of Apartments</h2>
+              <Floorsearch />
+              <Table striped bordered hover responsive >
+                <thead>
+                  <tr>
+                    <th>Owner</th>
+                    <th>Property Type</th>
+                    <th>Property Name</th>
+                    <th>Location</th>
+                    <th>Add Floor</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {apartments.map(apartment => (
+                    <tr key={apartment._id}>
+                      <td>{apartment.user.name}</td>
+                      <td> {apartment.propertyType} </td>
+                      <td>{apartment.name || apartment.buildingname}</td>
+                      <td>{apartment.address}</td>
+                      <td>
+                        {apartment.floors.map(floor => {
+                          return (
+                            <>
+                              <div key={floor._id} className='mt-3' style={{ display: 'flex', gap: '10px' }} >
+                                {floor.name}
+                                <FiEdit style={{ cursor: 'pointer', fontSize: '15px', color: '#008f00' }} onClick={() => handleOpenEditModal(floor._id, floor.name)} />
+                                <AiOutlineDelete onClick={() => handleOpenDeleteModal(apartment._id, floor._id)} style={{ cursor: 'pointer', fontSize: '15px', color: '#e03c3e' }} />
+
+                                {/* <AiOutlineDelete onClick={() => handleDeleteFloor(apartment._id, floor._id)} style={{ cursor: 'pointer', fontSize: '15px', color: '#e03c3e' }} /> */}
+                              </div>
+
+                            </>
+                          )
+                        })}
+                      </td>
+
+                      <td>
+
+                        <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }} >
+                          {/* Add Floor Button */}
+                          <div>
+                            <Button variant="success" size='sm' onClick={() => openModal(apartment._id)}>
+                              <GrAdd style={{ fontSize: '15px', cursor: 'pointer' }} />
+                            </Button>
+                          </div>
+
+
+                          {/* Delete Handler */}
+                          {/* {apartment.floors.map(floor => (
+                            <div key={floor._id}  >
+                              <Button variant="danger" size="sm" onClick={() => handleDeleteFloor(apartment._id, floor._id)}> <AiOutlineDelete style={{ fontSize: '20px' }} />
+                              </Button>
+                              <AiOutlineDelete onClick={() => handleDeleteFloor(apartment._id, floor._id)} style={{ cursor: 'pointer', fontSize: '15px', color: '#e03c3e' }} />
+                            </div>
+                          ))} */}
+
+                          {/* Edit Handler */}
+                          {/* {apartment.floors.map(floor => (
+                            <div key={floor._id} >
+                              <Button variant="primary" size="sm" onClick={() => handleOpenEditModal(floor._id, floor.name)} >
+                              <FiEdit style={{ cursor: 'pointer', fontSize: '15px', color: '#838383' }} onClick={() => handleOpenEditModal(floor._id, floor.name)} />
+                              </Button>
+                            </div>
+                          ))} */}
+                        </div>
+
+                      </td>
+
+
+                      {/* <td>
+                        {apartment.floors.map(floor => (
+                          <div key={floor._id} className='mt-2' >
+                            <Button variant="primary" size="sm" onClick={() => handleOpenEditModal(floor._id, floor.name)}>Edit</Button>
+                          </div>
+                        ))}
+                      </td> */}
+
+                      {/* <td>
+                        <Button variant="primary" onClick={() => openModal(apartment._id)}>Add Floor</Button>
+                      </td> */}
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </Col>
+          </Row>
+        </Col>
+
+      </Row>
+
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Add Floor</Modal.Title>
@@ -168,7 +239,7 @@ const AddFloor = () => {
         </Modal.Footer>
       </Modal>
 
-   
+
       <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Floor</Modal.Title>
@@ -184,6 +255,22 @@ const AddFloor = () => {
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowEditModal(false)}>Close</Button>
           <Button variant="primary" onClick={handleEditFloor}>Save Changes</Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Header closeButton>
+        </Modal.Header>
+        <div style={{ display: 'flex', justifyContent: 'center' }} >
+         {/*  <img style={{ width: '100px' }}   src={deleteicon}  alt="Delete image" />*/}
+        </div>
+        <Modal.Title style={{ textAlign: 'center', fontSize: '25px' }} className='mt-2' >Are you sure? </Modal.Title>
+        <Modal.Body>
+          <p style={{ textAlign: 'center', fontWeight: '500' }} >Do you really want to delete this floor.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={() => handleDeleteFloor()}>Yes</Button>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>No</Button>
         </Modal.Footer>
       </Modal>
     </div>
