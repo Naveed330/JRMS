@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { AuthContext } from '../Pages/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
-
+import logo from '../Components/logo.png'
 const Navbar = () => {
     const { state, logout } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -19,19 +19,18 @@ const Navbar = () => {
                 <span className="availability-status online" />
             </div>
             <div className="nav-profile-text">
-                <p className="mb-1 text-black">{state.user.name}</p>
+                <p className="mb-0 text-black">{state.user.name}</p>
             </div>
         </div>
     ) : null;
 
     return (
         <>
-
-
-
-            <nav className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">                <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-                <h1 style={{ marginTop: '10px', color: '#AE82CE', cursor: 'pointer' }} onClick={() => navigate('/superadmindashboard')} >JRMS</h1>
-            </div>
+            <nav className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" style={{ boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }} >
+                <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+                    <img src={logo} alt="logo" width={45} onClick={() => navigate('/superadmindashboard')} style={{ cursor: 'pointer' }} />
+                    <h1 style={{ marginTop: '6px', color: '#AE82CE', cursor: 'pointer' }} onClick={() => navigate('/superadmindashboard')} >JRMS</h1>
+                </div>
                 <div className="navbar-menu-wrapper d-flex align-items-stretch">
                     <button
                         className="navbar-toggler navbar-toggler align-self-center"
@@ -40,7 +39,7 @@ const Navbar = () => {
                     >
                         <span className="mdi mdi-menu" />
                     </button>
-                    <div className="search-field d-none d-md-block">
+                    {/* <div className="search-field d-none d-md-block">
                         <form className="d-flex align-items-center h-100" action="#">
                             <div className="input-group">
                                 <div className="input-group-prepend bg-transparent">
@@ -53,7 +52,7 @@ const Navbar = () => {
                                 />
                             </div>
                         </form>
-                    </div>
+                    </div> */}
                     <ul className="navbar-nav navbar-nav-right">
                         <li className="nav-item nav-profile dropdown">
                             <a

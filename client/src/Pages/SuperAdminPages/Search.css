@@ -1,0 +1,11 @@
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
+    padding: 20px;
+    background-color: #f4f4f4; /* Light gray background */
+}
+
+/* Add more specific styles as needed */

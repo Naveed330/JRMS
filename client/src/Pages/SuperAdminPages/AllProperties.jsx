@@ -1,11 +1,18 @@
 import React, { useState, useEffect, useContext, } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../AuthContext';
-import { Button, Modal, Form, Table, Row, Col, Spinner } from 'react-bootstrap';
+import { Button, Modal, Form, Table, Row, Col, Spinner, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import SideBar from '../../Components/SideBar';
 import { toast } from 'react-toastify';
-
+import { GrLocation, GrStatusGood } from "react-icons/gr";
+import { BiSolidCity } from "react-icons/bi";
+import { AiFillPropertySafety } from "react-icons/ai";
+import { GiSightDisabled } from "react-icons/gi";
+import { Link } from 'react-router-dom'
+import { AiOutlineDelete } from "react-icons/ai";
+import { FiEdit } from "react-icons/fi";
+import Propertysearch from '../../Components/PropertySearch'
 const AllProperties = () => {
     const { state } = useContext(AuthContext);
     const [properties, setProperties] = useState([]);
@@ -80,10 +87,6 @@ const AllProperties = () => {
 
     };
 
-
-
-
-
     return (
         <div>
             <Row>
@@ -97,53 +100,110 @@ const AllProperties = () => {
                 <Col xs={12} sm={12} md={12} lg={10} xl={10} style={{ marginTop: '20px' }} >
                     <Row xs={1} md={2} lg={3}>
                         <Col xs={12} sm={12} md={12} lg={10} xl={10} >
-                            <div>
-                                <h1 className=' mt-5 mb-5 text-center'> All Properties </h1>
-                                {loading ? (
-                                    <Spinner animation="border" size="sm" />
-                                ) : error ? (
-                                    toast.error('Properties Not Found')
-                                ) : (
-                                    <>
-                                        <h2 >Apartments</h2>
+                            {
+                                properties.length > 0 ? <>
+                                    <div>
+                                        <h1 className='text-center' style={{ marginTop: '70px' }} > All Properties </h1>
+                                        <Propertysearch />
+                                        {loading ? (
+                                            <div style={{ display: 'flex', justifyContent: 'center' }} >
+                                                <Spinner animation="border" size="md" style={{ color: 'green' }} />
+                                            </div>
 
-                                        <Table size bordered hover responsive>
-                                            <thead>
-                                                <tr>
-                                                    <th>Owner</th>
-                                                    <th>Address</th>
-                                                    <th>Status</th>
-                                                    <th>Zone</th>
-                                                    <th>PropertyType</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            {properties.map(property => {
-                                                console.log(property, 'property');
-                                                return (
-                                                    <>
+                                        ) : error ? (
+                                            toast.error('Properties Not Found')
+                                        ) : (
+                                            <>
+                                                <h2 className='text-center mt-3' >Apartments</h2>
+                                                <div style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', flexWrap: 'wrap' }} >
+                                                    {properties.map(property => {
+                                                        return (
+                                                            <>
+                                                                <Card className='mt-3 mb-5' style={{ width: '23rem', height: '28rem', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
+                                                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '10px' }} >
+                                                                        <Card.Img variant="top" style={{ width: '100%', height: '180px' }} src={property.propertyImage && property.propertyImage} alt='Property_image' />
+                                                                    </div>
 
-                                                        <tbody>
-                                                            <tr>
-                                                                <td>  {property.name && property.name} </td>
-                                                                <td>{property.address && property.address}</td>
-                                                                <td>  {property.status && property.status} </td>
-                                                                <td> {property.zone && property.zone} </td>
-                                                                <td> {property.propertyType && property.propertyType} </td>
-                                                                <Button className='btn-gradient-primary py-2 px-3' onClick={() => handlePage(navigate(`/propertyDetails/${property._id}`, { state: { properties } }))} >Details</Button>
-                                                            </tr>
+                                                                    <Card.Body>
+                                                                        <Card.Title>
+                                                                            <div className='text-center' >
+                                                                                <h3>
+                                                                                    {property.name && property.name || property.buildingname && property.buildingname}
+                                                                                </h3>
+                                                                            </div>
+                                                                        </Card.Title>
 
-                                                        </tbody>
 
-                                                    </>
-                                                )
+                                                                        <Card.Text>
+                                                                            <ul style={{ listStyle: 'none' }} >
+                                                                                <li>
+                                                                                    <GrLocation /> {property.address && property.address}
+                                                                                </li>
 
-                                            })}
+                                                                                <li>
+                                                                                    {property.status && property.status ?
+                                                                                        (property.status === 'enable' ?
+                                                                                            <>
+                                                                                                <GrStatusGood /> {property.status}
+                                                                                            </>
+                                                                                            :
+                                                                                            <>
+                                                                                                <GiSightDisabled /> {property.status}
+                                                                                            </>
+                                                                                        )
+                                                                                        :
+                                                                                        null
+                                                                                    }
+                                                                                </li>
 
-                                        </Table>
-                                    </>
-                                )}
-                            </div>
+
+                                                                                <li>
+                                                                                    <BiSolidCity />   {property.zone && property.zone}
+                                                                                </li>
+
+                                                                                <li>
+                                                                                    <AiFillPropertySafety />   {property.propertyType && property.propertyType}
+                                                                                </li>
+                                                                            </ul>
+                                                                        </Card.Text>
+                                                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} >
+                                                                            <Link style={{ textDecoration: 'none', textAlign: 'center' }} className='btn-gradient-primary py-2 px-3' to={`/singleproperty/${property._id}`} >Details</Link>
+                                                                            <div style={{ display: 'flex', gap: '15px' }} >
+                                                                                <FiEdit style={{ cursor: 'pointer', fontSize: '20px', color: '#008f00' }} onClick={() => handleEdit(property)} />
+                                                                                <AiOutlineDelete style={{ cursor: 'pointer', fontSize: '20px', color: '#e03c3e' }} onClick={() => handleDelete(property._id)} />
+                                                                            </div>
+
+                                                                        </div>
+
+
+                                                                    </Card.Body>
+                                                                </Card>
+
+
+
+                                                            </>
+                                                        )
+                                                    })}
+                                                </div>
+
+                                            </>
+                                        )}
+
+                                    </div>
+                                </> : <div style={{ marginTop: '70px', display: 'flex', justifyContent: 'center', alignItems: 'center' }} >
+                                    <Card>
+                                        <Card.Body>
+                                            <Card.Title style={{ fontSize: '30px', textAlign: 'center' }} > No properties</Card.Title>
+                                            <p style={{ fontWeight: 500 }} >Sorry! No properties found. You have to add properties from below Link</p>
+                                            <div style={{ display: 'flex', justifyContent: 'center', }} >
+                                                <Button style={{ borderRadius: '20px' }} onClick={() => navigate('/addproperty')} >Add Properties</Button>
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
+                                </div>
+                            }
+
+
                             <Modal show={showModal} onHide={() => setShowModal(false)}>
                                 <Modal.Header closeButton>
                                     <Modal.Title>Edit Property</Modal.Title>
@@ -179,6 +239,7 @@ const AllProperties = () => {
                         </Col>
                     </Row>
                 </Col>
+
             </Row>
 
         </div>

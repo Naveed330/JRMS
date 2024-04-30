@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Spinner } from 'react-bootstrap';
 import axios from 'axios';
-import changepassword from '../assets/changepassword.png'
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation and useNavigate
-import forgotpassword from '../assets/forgotpassword.png'
+
 const ResetPassword = () => {
   const location = useLocation(); // Get the location object
   const navigate = useNavigate(); // Get the navigation function
@@ -57,60 +56,55 @@ const ResetPassword = () => {
   };
 
   return (
-    <div style={{ display: 'flex', marginTop: '10%', justifyContent: 'space-evenly', alignItems: 'center' }}>
-      <div>
-        <img src={forgotpassword} alt="forgotpassword" style={{ width: '100%' }} />
-      </div>
-      <div className="pt-8">
-        <div className="border p-4 mx-auto my-5 shadow-sm" style={{ maxWidth: 400 }}>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} >
-            <img src={changepassword} alt="Change-Password" width={'100px'} />
+    <div class="container-xxl bg-white p-0">
+        <div class="container-xxl py-4 bg-dark hero-header mb-3">
+          <div class="container text-center my-3 pt-1 pb-1">
           </div>
-          <div className="h4 bold text-center mt-3" style={{ fontWeight: 'bold' }}>
-            <h3>Reset Password</h3>
-          </div>
-          <p style={{ color: '#979dac', textAlign: 'center' }}>
-            Set a new Password
-          </p>
-          <form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label >New Password</Form.Label>
-              <Form.Control
-                type="password"
-                name="newPassword"
-                placeholder="New Password"
-                value={formData.newPassword}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
-            <Button variant="success" type="submit" disabled={isLoading}>
-              {isLoading ? <Spinner animation="border" size="sm" /> : 'Reset Password'}
-            </Button>{" "}
-            <Button variant="outline-secondary" type="button" onClick={handleCancel}>
-              Cancel
-            </Button>
-            <div className="mt-3">
-              {message && (
-                <p className={message.includes('Error') ? 'text-danger' : 'text-success'}>
-                  {message}
-                </p>
-              )}
-            </div>
-          </form>
         </div>
+    <Container className="pt-8">
+      <div className="border p-4 mx-auto my-5 shadow-sm" style={{ maxWidth: 400 }}>
+        <div className="h4 bold text-center text-uppercase">
+          <span className="text-primary">Reset</span> Password
+        </div>
+        <form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <Form.Label>New Password</Form.Label>
+            <Form.Control
+              type="password"
+              name="newPassword"
+              placeholder="New Password"
+              value={formData.newPassword}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Confirm Password</Form.Label>
+            <Form.Control
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Button variant="success" type="submit" disabled={isLoading}>
+            {isLoading ? <Spinner animation="border" size="sm" /> : 'Reset Password'}
+          </Button>{" "}
+          <Button variant="outline-secondary" type="button" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <div className="mt-3">
+            {message && (
+              <p className={message.includes('Error') ? 'text-danger' : 'text-success'}>
+                {message}
+              </p>
+            )}
+          </div>
+        </form>
       </div>
+    </Container>
     </div>
   );
 };
