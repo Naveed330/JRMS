@@ -196,7 +196,7 @@ const SuperadminPdc = () => {
 
             {/* Previous Payments Table */}
             <h3 className='mt-4'>Dues PDC</h3>
-            <Table striped bordered hover responsive>
+            <Table striped bordered hover responsive className='mb-5' >
                 <thead style={{ backgroundColor: '#005f75' }}>
                     <tr>
                         <th style={{ color: '#ffff' }} >Name</th>
@@ -229,9 +229,9 @@ const SuperadminPdc = () => {
                 </tbody>
             </Table>
 
-            <div className='mb-5' style={{ display: 'flex', justifyContent: 'center', marginTop: '1em', marginBottom: '1em' }}>
+            {/* <div className='mb-5' style={{ display: 'flex', justifyContent: 'center', marginTop: '1em', marginBottom: '1em' }}>
                 <Button onClick={() => navigate('/addadministrationfee')}>Add Administration Fee</Button>
-            </div>
+            </div> */}
 
             {/* Modal for Editing */}
             <Modal show={showModal} onHide={handleModalClose}>

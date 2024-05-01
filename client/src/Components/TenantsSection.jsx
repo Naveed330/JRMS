@@ -34,10 +34,10 @@ const TenantsSection = () => {
         <div className="row">
             <div className="card" style={{ boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
                 <div className="card-body">
-                    <h3>Top Tenants</h3>
+                    <h3  style={{color: '#4b2f00'}}>Top Tenants</h3>
                     {error && <p>Error: {error}</p>}
                     <Table responsive striped bordered hover className='mt-1'>
-                        <thead style={{ backgroundColor: '#005f75' }} >
+                        <thead style={{ backgroundColor: '#d7aa47' }} >
                             <tr>
                                 <th style={{ color: 'white' }} >Name</th>
                                 <th style={{ color: 'white' }} >Contact</th>
@@ -63,15 +63,15 @@ const TenantsSection = () => {
                                         <td>{startingDate.toDateString()}</td>
                                         <td>{endDate.toDateString()}</td>
                                         <td>{`${tenant.contractInfo.monthsDuration && tenant.contractInfo.monthsDuration} month`}</td>
-                                        <td>{tenant?.contractInfo?.finalAmount && tenant?.contractInfo?.finalAmount}</td>
-                                        <td>{tenant?.contractInfo?.paidAmount && tenant?.contractInfo?.paidAmount}</td>
+                                        <td>{`${tenant?.contractInfo?.finalAmount && tenant?.contractInfo?.finalAmount} AED`}</td>
+                                        <td>{`${tenant?.contractInfo?.paidAmount && tenant?.contractInfo?.paidAmount} AED`}</td>
                                         <td>{tenant?.unitId[0]?.type || 'No Unit Available'}</td>
                                         <td>{tenant.floorId.name && tenant.floorId.name}</td>
                                         <td>
                                             <Link
-                                                variant="primary"
+                                                // variant="primary"
                                                 to={`/tenantdetails/${tenant._id}`}
-                                                style={{ backgroundColor: '#301bbe', color: 'white', textDecoration: 'none', borderRadius: '10px' }}
+                                                style={{ backgroundColor: '#b3750e', color: 'black', textDecoration: 'none', borderRadius: '10px' }}
                                                 className='py-2 px-3'
                                             >
                                                 View

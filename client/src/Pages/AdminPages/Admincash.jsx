@@ -83,42 +83,41 @@ const AdminCash = () => {
                             />
                             </div>
                          
-                            <Table striped bordered hover responsive >
-                                <thead style={{ backgroundColor: '#005f75' }} >
-                                    <tr style={{ color: '#ffff' }} >
-                                        <th>Name</th>
-                                        <th>Contact</th>
-                                        <th>Property Name</th>
-                                        <th>Floor Name</th>
-                                        <th>Unit Name</th>
-                                        <th>Amount</th>
-                                        <th>Invoice</th>
-                                        <th>Date</th>
+                            <Table striped bordered hover responsive className='mb-5'>
+                                <thead style={{ backgroundColor: '#005f75' }}>
+                                    <tr>
+                                        <th style={{ color: '#ffff' }}>Name</th>
+                                        <th style={{ color: '#ffff' }}>Contact</th>
+                                        <th style={{ color: '#ffff' }}>Property Name</th>
+                                        <th style={{ color: '#ffff' }}>Floor Name</th>
+                                        <th style={{ color: '#ffff' }}>Unit Name</th>
+                                        <th style={{ color: '#ffff' }}>Amount</th>
+                                        <th style={{ color: '#ffff' }}>Invoice</th>
+                                        <th style={{ color: '#ffff' }}>Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredTenants.map(tenant => (
-                                        <tr key={tenant._id}>
-                                            <td>{tenant.name || tenant.companyname}</td>
-                                            <td>{tenant.contact && tenant.contact}</td>
-                                            <td>{tenant.property && (tenant.property?.name || tenant.property?.buildingname)}</td>
-                                            <td>{tenant.floorId?.name}</td>
-                                            <td>
-                                                {tenant.unitId && tenant.unitId.map(unit => unit.type).join(', ')}
-                                            </td>
-                                            {tenant.contractInfo.payment.map(payment => (
-                                                payment.paymentmethod === 'cash' && (
-                                                    <React.Fragment key={payment._id}>
-                                                        <td>{`${payment.amount && payment.amount} AED`}</td>
-                                                        <td>{`${payment.checkorinvoice && payment.checkorinvoice} AED`}</td>
-                                                        <td>{new Date(payment.date).toLocaleDateString()}</td>
-                                                    </React.Fragment>
-                                                )
-                                            ))}
-                                        </tr>
-                                    ))}
+                                    {filteredTenants.map(tenant =>
+                                        tenant.contractInfo.payment.map((payment, index) => (
+                                            payment.paymentmethod === 'cash' && (
+                                                <tr key={`${tenant._id}-${index}`}>
+                                                     <td>{tenant.name || tenant.companyname}</td>
+                                                     <td>{tenant.contact && tenant.contact}</td>
+                                                     <td>{tenant.property && (tenant.property?.name || tenant.property?.buildingname)}</td>
+                                                    <td>{tenant.property && (tenant.property?.name || tenant.property?.buildingname)}</td>
+                                                    <td>
+                                                        {tenant.unitId && tenant.unitId.map(unit => unit.type).join(', ')}
+                                                    </td>
+                                                    <td>{payment.amount && payment.amount} AED</td>
+                                                    <td>{payment.checkorinvoice && payment.checkorinvoice} AED</td>
+                                                    <td>{new Date(payment.date && payment.date).toLocaleDateString()}</td>
+                                                </tr>
+                                            )
+                                        ))
+                                    )}
                                 </tbody>
                             </Table>
+
                         </Col>
                     </Row>
                 </Col>

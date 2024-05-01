@@ -80,13 +80,14 @@ const StaticTenantData = () => {
 
 
 
-                                {/* Contract Details Table */}
-                                <Col xs={12} sm={12} md={12} lg={12} xl={12} className='mt-3'>
-                                    <Table striped hover responsive style={{ border: '1px solid black' }} key={contractInfo._id}>
+                            {/* Contract Details Table */}
+                            <Col xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: '10px' }}>
+                                    <Table striped hover responsive style={{ border: '1px solid black', marginTop: '10px' }} key={contractInfo._id}>
                                         <thead style={{ backgroundColor: '#005f75' }} >
                                             <th rowSpan={2} colspan={2} style={{ color: 'white' }} >CONTRACT DETAILS</th>
                                             <th rowSpan={2} colspan={2} style={{ display: 'flex', justifyContent: 'end', color: 'white' }}>تفاصيل العقد</th>
                                         </thead>
+
                                         <tbody>
                                             <tr>
                                                 <td style={{ backgroundColor: '#e7e6e6' }} >Contract No .</td>
@@ -95,151 +96,43 @@ const StaticTenantData = () => {
                                             </tr>
 
                                             <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Tenant Name</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{state.tenantDetails.name && state.tenantDetails.name || state.tenantDetails.companyname && state.tenantDetails.companyname}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >ضريبة القيمة المضافة (%)</td>
-                                            </tr>
-
-                                            <tr>
                                                 <td style={{ backgroundColor: '#e7e6e6' }} >Issue Date</td>
                                                 <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{new Date(state.tenantDetails.updatedAt).toLocaleDateString()}</td>
                                                 <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >تاريخ البدء</td>
                                             </tr>
 
-
-                                            {/* <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >End Date</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{new Date(contractInfo.endDate).toLocaleDateString()}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >تاريخ الانتهاء</td>
-                                            </tr> */}
                                             <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Owner Name</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} > {state.tenantDetails.ownerId.name && state.tenantDetails.ownerId.name}  </td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >مبلغ التأمين</td>
+                                                <td style={{ backgroundColor: '#e7e6e6' }} >Starting Date</td>
+                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{new Date(state.tenantDetails.contractInfo.startingDate).toLocaleDateString()}</td>
+                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >تاريخ البدء</td>
                                             </tr>
 
                                             <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Owner Contact</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} > {state.tenantDetails.ownerId.contact && state.tenantDetails.ownerId.contact}  </td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >مبلغ التأمين</td>
+                                                <td style={{ backgroundColor: '#e7e6e6' }} >Ending Date</td>
+                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{new Date(state.tenantDetails.contractInfo.endDate).toLocaleDateString()}</td>
+                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >تاريخ البدء</td>
                                             </tr>
 
                                             <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Owner Email</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} > {state.tenantDetails.ownerId.email && state.tenantDetails.ownerId.email}  </td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >مبلغ التأمين</td>
-                                            </tr>
-
-                                            {/* <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Grace Period (days)</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{contractInfo.graceperiod && contractInfo.graceperiod}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >فترة السماح (بالأيام)</td>
-                                            </tr> */}
-
-                                            {/* <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Number of Occupants</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{contractInfo.numberofoccupants && contractInfo.numberofoccupants}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >عدد الشاغلين</td>
-                                            </tr> */}
-
-                                            <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Property</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{property.name && property.name}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >فاتورة المياه والكهرباء</td>
+                                                <td style={{ backgroundColor: '#e7e6e6' }} >Duration</td>
+                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{`${state.tenantDetails.contractInfo.monthsDuration} Months`}</td>
+                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >تاريخ البدء</td>
                                             </tr>
 
                                             <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Floor Name</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{state.tenantDetails.floorId.name && state.tenantDetails.floorId.name}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >فاتورة المياه والكهرباء</td>
-                                            </tr>
-
-                                            <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Unit No</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{state.tenantDetails?.unitId[0]?.unitNo}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >فاتورة المياه والكهرباء</td>
-                                            </tr>
-
-                                            <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Sector</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{state.tenantDetails.property.sector && state.tenantDetails.property.sector}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >إجمالي مبلغ العقد</td>
-                                            </tr>
-
-
-
-
-                                            {/* <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Plot No</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{tenantDetails.property.pilotno && tenantDetails.property.pilotno}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >الاستخدام</td>
-                                            </tr> */}
-
-                                            {/* <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Other Cost</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{contractInfo.otherCost && contractInfo.otherCost}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >تكلفة أخرى</td>
-                                            </tr> */}
-
-                                            {/* <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Parking</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{contractInfo.parking ? 'Yes' : 'No'}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >موقف سيارات</td>
-                                            </tr> */}
-
-                                            {/* <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Discount</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{contractInfo.discount && contractInfo.discount}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >تخفيض</td>
-                                            </tr> */}
-
-                                            {/* <tr>
                                                 <td style={{ backgroundColor: '#e7e6e6' }} >Final Amount</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{contractInfo.finalAmount && contractInfo.finalAmount} AED</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >القيمة النهائية</td>
+                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{`${state.tenantDetails.contractInfo.finalAmount} AED`}</td>
+                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >تاريخ البدء</td>
                                             </tr>
 
                                             <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Paid Amount</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{contractInfo.paidAmount && contractInfo.paidAmount} AED</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >المبلغ المدفوع</td>
+                                                <td style={{ backgroundColor: '#e7e6e6' }} >Total checks</td>
+                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{`${state.tenantDetails.contractInfo.totalChecks}`}</td>
+                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >تاريخ البدء</td>
                                             </tr>
 
-                                            <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Bank</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{contractInfo.bank && contractInfo.bank}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >بنك</td>
-                                            </tr>
 
-                                            <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Total Checks</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{contractInfo.totalChecks && contractInfo.totalChecks}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >إجمالي الشيكات</td>
-                                            </tr>
-
-                                            <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >National ID</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{ownerId.nid && ownerId.nid}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >الهوية الوطنية</td>
-                                            </tr> */}
-
-                                            {/* <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Email</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{ownerId.email && ownerId.email}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >بريد إلكتروني</td>
-                                            </tr>
-
-                                            <tr>
-                                                <td style={{ backgroundColor: '#e7e6e6' }} >Contact</td>
-                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{ownerId.contact && ownerId.contact}</td>
-                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >اتصال</td>
-                                            </tr> */}
-
-                                            {/* {
-        property?.map((item) => {
-            console.log(item, 'itemproperty');
-            return (
-                <> */}
+                                           
                                             {
                                                 property.zone === "Abu dhabi" ?
                                                     <tr>
@@ -294,66 +187,14 @@ const StaticTenantData = () => {
         })
     } */}
 
-                                            {/* <tr>
-    <td style={{ backgroundColor: '#e7e6e6' }}>Property Image</td>
-    <td className='text-center'><img src={property[0]?.propertyImage} alt="Property" style={{ width:'100px' }} /></td>
-    <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }}>Property Image</td>
-</tr> */}
 
                                         </tbody>
+                                      
                                     </Table>
-                                    {/* <Table striped hover responsive style={{ border: '1px solid black' }}>
-                                        <thead  >
-                                            <th className='text-center' >All payments to be made to the benefits of Jovera Group <br /> or any other party designed by the lessor</th>
-                                            <th colSpan={2} className='text-center' >يجب سداد جميع المدفوعات لصالح مجموعة Jovera أو أي طرف آخر يحدده المؤجر</th>
-                                        </thead>
-
-                                        <tbody>
-                                            <tr>
-                                                <td className='text-center' >Additional Terms</td>
-                                                <td>Renewal /6 pauments /EIFM - 22% staff discount of AED 26,000 Rent</td>
-                                                <td>شروط إضافية</td>
-                                            </tr>
-
-                                            <tr>
-                                                <td className='text-center' >The terms and condition set out at the back policy contract are <br /> an integral part of this contract</td>
-                                                <td colSpan={2} className='text-center'>تعتبر الشروط والأحكام المنصوص عليها في عقد سياسة الظهر جزءًا لا يتجزأ من هذا العقد</td>
-                                            </tr>
-
-                                            <tr style={{ backgroundColor: 'white' }} >
-                                                <td className='text-center'>
-                                                    <p style={{ paddingBottom: '30px' }} >Signature of Landlord (Lessor)</p>
-                                                    <p>Date : 26-04-2024</p>
-                                                    <p>Prepared by : Sheikha Ali Mohamed</p>
-                                                </td>
-                                                <td colSpan={2} className='text-center'>
-                                                    <p style={{ paddingBottom: '30px' }} >Signature of Tenants (Lessor)</p>
-                                                </td>
-                                            </tr>
-
-
-
-                                        </tbody>
-                                    </Table> */}
-
-                                    {/* <div style={{ display: 'flex', justifyContent: 'space-around' }} className='mt-5' >
-                                        <div>
-                                            <p>AL-Jazeera Club Tower-A 8th floor</p>
-                                            <p>*Tel: +97100000000 *Fax: +9712222222</p>
-                                            <p>P.O.Box: 5252444, Abu Dhabi , United Arab Emirates</p>
-                                        </div>
-
-                                        <div>
-                                            <p>برج نادي الجزيرة-أ الدور الثامن</p>
-                                            <p>*هاتف: +97100000000 *فاكس: +9712222222</p>
-                                            <p>صندوق البريد: 5252444، أبوظبي، الإمارات العربية المتحدة</p>
-                                        </div>
-
-                                    </div> */}
                                 </Col>
 
-                                {/* PROPERTY DETAILS TABLE */}
-                                <Col xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: '30px' }}>
+                                   {/* PROPERTY DETAILS TABLE */}
+                                   <Col xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: '30px' }}>
                                     <div>
                                         <Table striped responsive style={{ border: '1px solid black' }} >
                                             <thead style={{ backgroundColor: '#005f75' }} >
@@ -539,6 +380,19 @@ const StaticTenantData = () => {
                                                     <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >اسم الطريق</td>
                                                 </tr>
 
+                                                <tr>
+                                                <td style={{ backgroundColor: '#e7e6e6' }} >Floor Name</td>
+                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{state.tenantDetails.floorId.name && state.tenantDetails.floorId.name}</td>
+                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >فاتورة المياه والكهرباء</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style={{ backgroundColor: '#e7e6e6' }} >Unit No</td>
+                                                <td className='text-center' style={{ backgroundColor: '#ffffff' }} >{state.tenantDetails?.unitId[0]?.unitNo}</td>
+                                                <td style={{ display: 'flex', justifyContent: 'end', backgroundColor: '#e7e6e6' }} >فاتورة المياه والكهرباء</td>
+                                            </tr>
+
+
 
 
 
@@ -546,6 +400,195 @@ const StaticTenantData = () => {
                                         </Table>
                                     </div>
                                 </Col>
+
+                                                                                          {/* FIRST PARTY (LESSOR) TABLE */}
+                            <Col xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: '50px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }} className='mb-3' >
+                                    <h4>FIRST PARTY (LESSOR)</h4>
+                                    <h4>الطرف الأول (المؤجر) </h4>
+                                </div>
+                                <Table striped hover responsive style={{ border: '1px solid black' }} id="table-to-download" >
+                                    <thead style={{ backgroundColor: '#005f75' }} >
+                                        <th rowSpan={2} colspan={4} style={{ color: 'white' }} >LandLord</th>
+                                        <th rowSpan={2} colspan={2} style={{ display: 'flex', justifyContent: 'end', color: 'white' }}>تفاصيل العقد </th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                Full Name
+                                            </td>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                Email
+                                            </td>
+                                            <td className='text-center' style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                Mobile No
+                                            </td>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                Nationality
+                                            </td>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                Emirates ID No
+                                            </td>
+
+                                        </tr>
+
+                                        <tr>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                {ownerId.name && ownerId.name}
+                                            </td>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                {ownerId.email && ownerId.email}
+                                            </td>
+                                            <td className='text-center' style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                {ownerId.contact && ownerId.contact}
+                                            </td>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                {ownerId.nationality && ownerId.nationality}
+                                            </td>
+
+
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                {ownerId.emid && ownerId.emid}
+                                            </td>
+
+
+
+                                        </tr>
+
+                                        <tr>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                بريد إلكتروني
+                                            </td>
+                                            <td className='text-center' style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                رقم المحمول
+                                            </td>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                جنسية
+                                            </td>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                رقم الهوية الإماراتية
+                                            </td>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                الاسم الكامل
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </Table>
+
+
+
+                                <Table striped responsive style={{ border: '1px solid black', marginTop: '1px' }} id="table-to-download">
+                                    <thead style={{ backgroundColor: '#005f75' }} >
+                                        <th rowSpan={2} colspan={2} style={{ color: 'white', }} >Contract Person</th>
+                                        <th rowSpan={2} colspan={2} style={{ display: 'flex', justifyContent: 'end', color: 'white', }}>شخص عقد</th>
+                                    </thead>
+
+
+                                    <tbody>
+                                        <tr>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                Full Name
+                                            </td>
+                                     
+                                            <td className='text-center' style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >    <p > {property.cname && property.cname} </p></td>
+                                            <td colSpan={3} style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                <p >{property.cname && property.cname}</p>
+                                            </td>
+                                            {/* </>
+                                                )
+                                            })
+                                        } */}
+
+                                        </tr>
+                                        <tr>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                <p>Mobile No.</p>
+                                            </td>
+                                 
+                                            <td className='text-center' style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >    <p  > {property.ccontact && property.ccontact} </p></td>
+                                            <td colSpan={3} style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                <p  >{property.ccontact && property.ccontact}</p>
+                                            </td>
+                                            {/* </>
+                                                )
+                                            })
+                                        } */}
+                                        </tr>
+
+                                        <tr>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+
+                                                <p>Email</p>
+
+                                            </td>
+                                       
+                                            <td className='text-center' style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >    <p  > {property.cemail && property.cemail} </p></td>
+                                            <td colSpan={3} style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                <p  >{property.cemail && property.cemail}</p>
+                                            </td>
+                                            {/* </>
+                                                )
+                                            })
+                                        } */}
+                                        </tr>
+
+
+
+                                    </tbody>
+                                </Table>
+                            </Col>
+
+                            {/* SECOND PARTY (TENANT) TABLE */}
+                            <Col xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: '30px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }} className='mb-3' >
+                                    <h4 style={{ textTransform: 'uppercase' }} >SECOND PARTY (TENANT)</h4>
+                                    <h4>الطرف الثاني (المستأجر)</h4>
+                                </div>
+                                <Table striped hover responsive style={{ border: '1px solid black' }} >
+                                    <thead style={{ backgroundColor: '#005f75' }} >
+                                        <th rowSpan={2} colspan={4} style={{ color: 'white' }} >TENANT DETAILS</th>
+                                        <th rowSpan={2} colspan={2} style={{ display: 'flex', justifyContent: 'end', color: 'white' }}>تفاصيل المستأجر </th>
+                                    </thead>
+
+
+                                    <tbody>
+                                        <tr>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                {state.tenantDetails.companyname && state.tenantDetails.companyname ? 'Company Name' : 'Tenant Name'}
+                                            </td>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                Email
+                                            </td>
+                                            <td className='text-center' style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                Mobile No.
+                                            </td>
+                                            <td colSpan={2} style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                {state.tenantDetails.licenseno && state.tenantDetails.licenseno ? 'License No' : 'Emirates Id'}
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                {state.tenantDetails.companyname ? state.tenantDetails.companyname : state.tenantDetails.name && state.tenantDetails.name}
+                                            </td>
+                                            <td className='text-center' style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                {state.tenantDetails.email && state.tenantDetails.email}
+                                            </td>
+                                            <td colSpan={2} style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                {state.tenantDetails.contact && state.tenantDetails.contact}
+                                            </td>
+
+                                            <td colSpan={2} style={{ backgroundColor: '#e7e6e6', textAlign: 'center' }} >
+                                                {state.tenantDetails.licenseno && state.tenantDetails.licenseno || state.tenantDetails.nid && state.tenantDetails.nid}
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </Table>
+
+
+                            </Col>
 
                                 <Col xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <h4 style={{ textTransform: 'uppercase' }} className='mt-4'> Administration Fees </h4>

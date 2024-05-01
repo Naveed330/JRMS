@@ -107,8 +107,8 @@ const AdministrationRecord = () => {
                                             return (
                                                 <>
                                                     <tr key={index} >
-                                                        <td> {record.tenantId.name && record.tenantId.name} </td>
-                                                        <td> {`${record.tenantId.contractInfo.monthsDuration && record.tenantId.contractInfo.monthsDuration} Months`} </td>
+                                                        <td> {record?.tenantId?.name ? record?.tenantId?.name : ' N/A'} </td>
+                                                        <td> {`${record?.tenantId?.contractInfo?.monthsDuration ? record?.tenantId?.contractInfo?.monthsDuration : 'N/A'} Months`} </td>
                                                         <td>
                                                             <ul style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                                                 {filteredKeys.map((key, keyIndex) => (

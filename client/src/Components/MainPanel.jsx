@@ -144,12 +144,12 @@ const MainPanel = () => {
               <div className="col-md-12 grid-margin" style={{ boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }} >
                 <div className="card-body">
                   {/* Today's Payments Table */}
-                  <h3 className=''>Today's PDC</h3>
+                  <h3 style={{color: '#4b2f00'}} >Today's PDC</h3>
                   {
                     todayPaymentsSlice.length >= 1 ?
                       <>
                         <Table striped bordered hover responsive >
-                          <thead style={{ backgroundColor: '#005f75' }} >
+                          <thead style={{ backgroundColor: '#d7aa47' }} >
                             <tr>
                               <th style={{ color: 'white' }} >Name</th>
                               <th style={{ color: 'white' }} >Property Name</th>
@@ -187,7 +187,7 @@ const MainPanel = () => {
                       :
                       <div className='mt-2' style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} >
                         <h4 style={{ color: 'red' }} >Today's PDC is Not Available</h4>
-                        <Button onClick={()=>navigate('/pdc')} >More Information</Button>
+                        <Button  onClick={()=>navigate('/pdc')} >More Information</Button>
                       </div>
                   }
                 </div>

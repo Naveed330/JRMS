@@ -55,21 +55,21 @@ const Cash = () => {
                     <Row xs={1} md={2} lg={3}>
                         <Col xs={12} sm={12} md={12} lg={10} xl={10} >
                             <h2 className='text-center'>Cash Payments</h2>
-                            <div style={{width:'100%', maxWidth:'500px'}} >
-                            <Select
-                                placeholder="Search by tenant name"
-                                value={selectedTenant}
-                                onChange={setSelectedTenant}
-                                options={tenantOptions}
-                                isClearable
-                                className='mb-4'
-                            />
+                            <div style={{ width: '100%', maxWidth: '500px' }} >
+                                <Select
+                                    placeholder="Search by tenant name"
+                                    value={selectedTenant}
+                                    onChange={setSelectedTenant}
+                                    options={tenantOptions}
+                                    isClearable
+                                    className='mb-4'
+                                />
                             </div>
-                        
-                            <Table striped bordered hover responsive className='mb-5' >
-                                <thead style={{ backgroundColor: '#005f75' }} >
+
+                            <Table striped bordered hover responsive className='mb-5'>
+                                <thead style={{ backgroundColor: '#005f75' }}>
                                     <tr>
-                                        <th  style={{ color: '#ffff' }} >Name</th>
+                                        <th style={{ color: '#ffff' }}>Name</th>
                                         <th style={{ color: '#ffff' }}>Contact</th>
                                         <th style={{ color: '#ffff' }}>Property Name</th>
                                         <th style={{ color: '#ffff' }}>Floor Name</th>
@@ -80,28 +80,27 @@ const Cash = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredTenants.map(tenant => (
-                                        <tr key={tenant._id}>
-                                            <td>{tenant.name || tenant.companyname}</td>
-                                            <td>{tenant.contact && tenant.contact}</td>
-                                            <td>{tenant.property && (tenant.property?.name || tenant.property?.buildingname)}</td>
-                                            <td>{tenant.floorId?.name}</td>
-                                            <td>
-                                                {tenant.unitId && tenant.unitId.map(unit => unit.type).join(', ')}
-                                            </td>
-                                            {tenant.contractInfo.payment.map(payment => (
-                                                payment.paymentmethod === 'cash' && (
-                                                    <React.Fragment key={payment._id}>
-                                                        <td>{payment.amount && payment.amount} AED</td>
-                                                        <td>{payment.checkorinvoice && payment.checkorinvoice} AED</td>
-                                                        <td>{new Date(payment.date).toLocaleDateString()}</td>
-                                                    </React.Fragment>
-                                                )
-                                            ))}
-                                        </tr>
-                                    ))}
+                                    {filteredTenants.map(tenant =>
+                                        tenant.contractInfo.payment.map((payment, index) => (
+                                            payment.paymentmethod === 'cash' && (
+                                                <tr key={`${tenant._id}-${index}`}>
+                                                     <td>{tenant.name || tenant.companyname}</td>
+                                                     <td>{tenant.contact && tenant.contact}</td>
+                                                     <td>{tenant.property && (tenant.property?.name || tenant.property?.buildingname)}</td>
+                                                    <td>{tenant.property && (tenant.property?.name || tenant.property?.buildingname)}</td>
+                                                    <td>
+                                                        {tenant.unitId && tenant.unitId.map(unit => unit.type).join(', ')}
+                                                    </td>
+                                                    <td>{payment.amount && payment.amount} AED</td>
+                                                    <td>{payment.checkorinvoice && payment.checkorinvoice} AED</td>
+                                                    <td>{new Date(payment.date && payment.date).toLocaleDateString()}</td>
+                                                </tr>
+                                            )
+                                        ))
+                                    )}
                                 </tbody>
                             </Table>
+
                         </Col>
                     </Row>
                 </Col>

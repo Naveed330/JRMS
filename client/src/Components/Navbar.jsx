@@ -14,12 +14,12 @@ const Navbar = () => {
 
     const userProfile = state.user ? (
         <div className="d-flex align-items-center">
-            <div className="nav-profile-img">
+            <div className="nav-profile-img"  >
                 <img src={state.user.picture} alt="user" />
                 <span className="availability-status online" />
             </div>
             <div className="nav-profile-text">
-                <p className="mb-0 text-black">{state.user.name}</p>
+                <p className="mb-0" style={{ color: '#d7aa47', fontWeight: 'bold' }} >{state.user.name}</p>
             </div>
         </div>
     ) : null;
@@ -29,7 +29,7 @@ const Navbar = () => {
             <nav className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" style={{ boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }} >
                 <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
                     <img src={logo} alt="logo" width={45} onClick={() => navigate('/superadmindashboard')} style={{ cursor: 'pointer' }} />
-                    <h1 style={{ marginTop: '6px', color: '#AE82CE', cursor: 'pointer' }} onClick={() => navigate('/superadmindashboard')} >JRMS</h1>
+                    <h1 style={{ marginTop: '6px', color: '#d7aa47', cursor: 'pointer' }} onClick={() => navigate('/superadmindashboard')} >JRMS</h1>
                 </div>
                 <div className="navbar-menu-wrapper d-flex align-items-stretch">
                     <button
