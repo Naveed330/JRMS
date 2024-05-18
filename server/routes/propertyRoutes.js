@@ -34,11 +34,50 @@ const uploadToCloudinary = (req, res, next) => {
     });
 };
 
-// Endpoint to add property Super admin 
+// Endpoint to add property by Super admin
 propertyRouter.post('/addproperty', uploadToCloudinary, isAuth, isSuperAdmin, async (req, res) => {
     try {
-        const { name, userId, address, status, propertyType , contactinfo} = req.body;
+        const { 
+            name, 
+            userId,
+            cname,
+            ccontact,
+            cemail,
+            address, 
+            contactinfo,
+            propertyImage,
+            status, 
+            propertyType, 
+            municipality, 
+            zone, 
+            sector, 
+            roadName, 
+            plotNo, 
+            plotAddress, 
+            onwaniAddress, 
+            propertyNo, 
+            propertyRegistrationNo,
+            city,
+            area,
+            bondtype,
+            bondno,
+            bonddate,
+            govermentalno,
+            pilotno,
+            buildingname,
+            nameandstreet,
+            propertytype,
+            description,
+            propertyno,
+            joveracommission
+        } = req.body;
 
+        // Check if required fields are provided
+    //    if (!name || !userId  || !status || !propertyType) {
+      //      return res.status(400).send({ message: 'Missing required fields' });
+       // }
+
+        // Check if file was uploaded
         if (!req.file) {
             return res.status(400).send({ message: 'Please upload a property image' });
         }
@@ -46,11 +85,36 @@ propertyRouter.post('/addproperty', uploadToCloudinary, isAuth, isSuperAdmin, as
         const property = new Property({
             name,
             user: userId,
+            cname,
+            ccontact,
+            cemail,
             address,
+            contactinfo,
             propertyImage: req.file.path,
             status,
             propertyType,
-            contactinfo
+            municipality,
+            zone,
+            sector,
+            roadName,
+            plotNo,
+            plotAddress,
+            onwaniAddress,
+            propertyNo,
+            propertyRegistrationNo,
+            city,
+            area,
+            bondtype,
+            bondno,
+            bonddate,
+            govermentalno,
+            pilotno,
+            buildingname,
+            nameandstreet,
+            propertytype,
+            description,
+            propertyno,
+            joveracommission
         });
 
         const savedProperty = await property.save();
@@ -61,6 +125,7 @@ propertyRouter.post('/addproperty', uploadToCloudinary, isAuth, isSuperAdmin, as
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 // API to Add floor in the property 
 propertyRouter.post('/floor/:propertyId/addFloor', isAuth, isSuperAdmin,async (req, res) => {
@@ -95,32 +160,34 @@ propertyRouter.post('/floor/:propertyId/addFloor', isAuth, isSuperAdmin,async (r
   });
 
   // API to Delete floor from the property 
-propertyRouter.delete('/floor/:propertyId/deleteFloor/:floorId', isAuth, isSuperAdmin, async (req, res) => {
+// API to Delete floor from the property 
+propertyRouter.put('/floor/:propertyId/deleteFloor/:floorId', isAuth, isSuperAdmin, async (req, res) => {
     try {
         const { propertyId, floorId } = req.params;
-    
+        const { propertyName, floorName } = req.body;
+
         // Check if the property exists
         const property = await Property.findById(propertyId);
         if (!property) {
             return res.status(404).json({ error: 'Property not found' });
         }
-    
+
         // Check if the floor exists in the property
         const floorIndex = property.floors.findIndex(floor => floor._id.toString() === floorId);
         if (floorIndex === -1) {
             return res.status(404).json({ error: 'Floor not found in the property' });
         }
-    
-        // Remove the floor from the property
-        const deletedFloor = property.floors.splice(floorIndex, 1)[0];
+
+        // Update the DelStatus of the floor
+        property.floors[floorIndex].DelStatus = true;
         await property.save();
-    
-        // Delete the units associated with the floor
-        await Unit.deleteMany({ _id: { $in: deletedFloor.units } });
-    
-        res.status(200).json({ message: 'Floor and associated units deleted from property successfully' });
+
+        // Optionally, you can also update the units associated with the floor
+
+        // Send the property and floor names in the response
+        res.status(200).json({ message: 'Floor marked as deleted from property successfully', propertyName, floorName });
     } catch (error) {
-        console.error('Error deleting floor from property:', error);
+        console.error('Error marking floor as deleted from property:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -150,38 +217,41 @@ propertyRouter.delete('/floor/:propertyId/deleteFloor/:floorId', isAuth, isSuper
     });
     
 
-  // API endpoint to add a unit to a floor
-propertyRouter.post('/:floorId/addUnit',  isAuth, isSuperAdmin,async (req, res) => {
+// API endpoint to add a unit to a floor
+propertyRouter.post('/:floorId/addUnit', isAuth, isSuperAdmin, async (req, res) => {
     try {
-      const { floorId } = req.params;
-      const { name, type, occupied } = req.body;
-  
-      // Check if the floor exists
-      const floor = await Floor.findById(floorId);
-      if (!floor) {
-        return res.status(404).json({ error: 'Floor not found' });
-      }
-  
-      // Create the unit
-      const unit = new Unit({
-        name,
-        type,
-        occupied
-      });
-  
-      // Save the unit
-      await unit.save();
-  
-      // Add the unit to the floor
-      floor.units.push(unit);
-      await floor.save();
-  
-      res.status(201).json({ message: 'Unit added to floor successfully', unit });
+        const { floorId } = req.params;
+        const {  type, occupied, premiseNo, unitRegNo, unitNo } = req.body;
+
+        // Check if the floor exists
+        const floor = await Floor.findById(floorId);
+        if (!floor) {
+            return res.status(404).json({ error: 'Floor not found' });
+        }
+
+        // Create the unit
+        const unit = new Unit({
+            type,
+            occupied,
+            premiseNo,
+            unitRegNo,
+            unitNo
+        });
+
+        // Save the unit
+        await unit.save();
+
+        // Add the unit to the floor
+        floor.units.push(unit);
+        await floor.save();
+
+        res.status(201).json({ message: 'Unit added to floor successfully', unit });
     } catch (error) {
-      console.error('Error adding unit to floor:', error);
-      res.status(500).json({ error: 'Internal server error' });
+        console.error('Error adding unit to floor:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-  });
+});
+
 
   //API To Delete unit 
   propertyRouter.delete('/:floorId/deleteUnit/:unitId', isAuth, isSuperAdmin, async (req, res) => {
@@ -218,10 +288,11 @@ propertyRouter.post('/:floorId/addUnit',  isAuth, isSuperAdmin,async (req, res) 
 
 
 // Edit unit route
+// Update the route handler
 propertyRouter.put('/:floorId/editUnit/:unitId', isAuth, isSuperAdmin, async (req, res) => {
     try {
         const { floorId, unitId } = req.params;
-        const { name, type, occupied } = req.body;
+        const { type, occupied, premiseNo,  unitRegNo, unitNo } = req.body;
 
         // Check if the floor exists
         const floor = await Floor.findById(floorId);
@@ -238,9 +309,11 @@ propertyRouter.put('/:floorId/editUnit/:unitId', isAuth, isSuperAdmin, async (re
         }
 
         // Update the unit fields
-        unit.name = name;
         unit.type = type;
         unit.occupied = occupied;
+        unit.premiseNo = premiseNo;
+        unit.unitRegNo = unitRegNo;
+        unit.unitNo = unitNo;
         await unit.save();
 
         console.log('Unit edited successfully');
@@ -256,7 +329,7 @@ propertyRouter.put('/:floorId/editUnit/:unitId', isAuth, isSuperAdmin, async (re
 propertyRouter.get('/allproperties', isAuth, isSuperAdmin, async (req, res) => {
     try {
         const properties = await Property.find()
-            .populate('user', 'name email') // Populate user details
+            .populate('user', 'name email contact') // Populate user details
             .populate({
                 path: 'floors', // Populate floors field
                 populate: {
@@ -270,7 +343,40 @@ propertyRouter.get('/allproperties', isAuth, isSuperAdmin, async (req, res) => {
     }
 });
 
-
+// Endpoint to get all properties (for superadmin) with user and floor details populated
+propertyRouter.get('/singleproperty/:propertyId?', isAuth, isSuperAdmin, async (req, res) => {
+    try {
+        const { propertyId } = req.params;
+        if (propertyId) {
+            const property = await Property.findById(propertyId)
+                .populate('user', 'name email contact') // Populate user details
+                .populate({
+                    path: 'floors', // Populate floors field
+                    populate: {
+                        path: 'units' // Populate units field within each floor
+                    }
+                });
+            if (!property) {
+                return res.status(404).json({ error: 'Property not found' });
+            }
+            return res.status(200).json(property);
+        } else {
+            const properties = await Property.find()
+                .populate('user', 'name email') // Populate user details
+                .populate({
+                    path: 'floors', // Populate floors field
+                    populate: {
+                        path: 'units' // Populate units field within each floor
+                    }
+                });
+            return res.status(200).json(properties);
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+ 
 
 
 
@@ -307,7 +413,7 @@ propertyRouter.put(
     isSuperAdmin,
     expressAsyncHandler(async (req, res) => {
         try {
-            const { name, userId, address, status, propertyType , contactinfo} = req.body;
+            const { name, user, address, status, propertyType , contactinfo,  cname, ccontact,cemail,municipality,zone, sector, roadName, plotNo,plotAddress, onwaniAddress, propertyNo, propertyRegistrationNo, city,area, joveracommission} = req.body;
             
             const property = await Property.findOne({ _id: req.params.id });
 
@@ -317,8 +423,30 @@ propertyRouter.put(
 
             // Update the property details
             property.name = name;
-            property.user = userId;
+            property.user = user;
+            property.status = status;
             property.address = address;
+            property.propertyType = propertyType;
+            property.contactinfo = contactinfo;
+            property.cname = cname;
+            property.ccontact = ccontact;
+            property.cemail = cemail;
+            property.municipality = municipality;
+            property.zone = zone;
+            property.sector = sector;
+            property.roadName = roadName;
+            property.plotNo = plotNo;
+            property.plotAddress = plotAddress;
+            property.onwaniAddress = onwaniAddress;            
+            property.propertyNo = propertyNo;
+            property.propertyRegistrationNo = propertyRegistrationNo;
+            property.city = city;
+            property.area = area;
+            property.address = joveracommission;
+
+           
+
+
             
            if(req.file){
                 // If a new image is uploaded, update the path
@@ -341,17 +469,69 @@ propertyRouter.put(
     })
 );
 
+propertyRouter.post('/properties-by-user', isAuth, isSuperAdmin, async (req, res) => {
+    const { userId } = req.body; // Get userId from request body
 
-
-////   Admin Property Routes //// 
-////   Admin Property Routes //// 
-////   Admin Property Routes //// 
-
-
-propertyRouter.post('/addpropertybyadmin', uploadToCloudinary, isAuth, isAdmin, async (req, res) => {
     try {
-        const { name, userId, address, status, propertyType , contactinfo} = req.body;
+        // Find properties where the user ID matches
+        const properties = await Property.find({ user: userId });
 
+        res.status(200).json(properties);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+
+////   Admin Property Routes //// 
+////   Admin Property Routes //// 
+////   Admin Property Routes //// 
+
+
+propertyRouter.post('/addpropertyforadmin', uploadToCloudinary, isAuth, isAdmin, async (req, res) => {
+    try {
+        const { 
+            name, 
+            userId,
+            cname,
+            ccontact,
+            cemail,
+            address, 
+            contactinfo,
+            propertyImage,
+            status, 
+            propertyType, 
+            municipality, 
+            zone, 
+            sector, 
+            roadName, 
+            plotNo, 
+            plotAddress, 
+            onwaniAddress, 
+            propertyNo, 
+            propertyRegistrationNo,
+            city,
+            area,
+            bondtype,
+            bondno,
+            bonddate,
+            govermentalno,
+            pilotno,
+            buildingname,
+            nameandstreet,
+            propertytype,
+            description,
+            propertyno,
+        } = req.body;
+
+        // Check if required fields are provided
+    //    if (!name || !userId  || !status || !propertyType) {
+      //      return res.status(400).send({ message: 'Missing required fields' });
+       // }
+
+        // Check if file was uploaded
         if (!req.file) {
             return res.status(400).send({ message: 'Please upload a property image' });
         }
@@ -359,11 +539,35 @@ propertyRouter.post('/addpropertybyadmin', uploadToCloudinary, isAuth, isAdmin, 
         const property = new Property({
             name,
             user: userId,
+            cname,
+            ccontact,
+            cemail,
             address,
+            contactinfo,
             propertyImage: req.file.path,
             status,
             propertyType,
-            contactinfo
+            municipality,
+            zone,
+            sector,
+            roadName,
+            plotNo,
+            plotAddress,
+            onwaniAddress,
+            propertyNo,
+            propertyRegistrationNo,
+            city,
+            area,
+            bondtype,
+            bondno,
+            bonddate,
+            govermentalno,
+            pilotno,
+            buildingname,
+            nameandstreet,
+            propertytype,
+            description,
+            propertyno
         });
 
         const savedProperty = await property.save();
@@ -376,10 +580,181 @@ propertyRouter.post('/addpropertybyadmin', uploadToCloudinary, isAuth, isAdmin, 
 });
 
 
+// Endpoint to edit property (for Admin)
+propertyRouter.put(
+    '/propertyforadmin/edit/:id',
+    uploadToCloudinary,
+    isAuth,
+    isAdmin,
+    expressAsyncHandler(async (req, res) => {
+        try {
+            const { name, user, address, status, propertyType , contactinfo} = req.body;
+            
+            const property = await Property.findOne({ _id: req.params.id });
+
+            if (!property) {
+                return res.status(404).send({ message: 'Property not found' });
+            }
+
+            // Update the property details
+            property.name = name;
+            property.user = user;
+            property.address = address;
+            
+           if(req.file){
+                // If a new image is uploaded, update the path
+                property.propertyImage= req.file.path; 
+           }
+           
+           // Update other fields as needed
+           property.status= status;
+           property.propertyType= propertyType;
+           property.contactinfo= contactinfo;
+
+          const updatedProperty= await property.save();
+
+     res.send(updatedProperty);
+         
+        } catch (error) {
+            console.error('Error editing user:', error);
+             res.status(500).send({ message: 'Error editing user' });
+        }
+    })
+);
+ // API to Add floor in the property 
+propertyRouter.post('/floorforadmin/:propertyId/addFloor', isAuth, isAdmin,async (req, res) => {
+    try {
+      const { propertyId } = req.params;
+      const { name, units } = req.body;
+  
+      // Check if the property exists
+      const property = await Property.findById(propertyId);
+      if (!property) {
+        return res.status(404).json({ error: 'Property not found' });
+      }
+  
+      // Create the floor
+      const floor = new Floor({
+        name,
+        units
+      });
+  
+      // Save the floor
+      await floor.save();
+  
+      // Add the floor to the property
+      property.floors.push(floor);
+      await property.save();
+  
+      res.status(201).json({ message: 'Floor added to property successfully', floor });
+    } catch (error) {
+      console.error('Error adding floor to property:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+
+    // API endpoint to edit floor 
+    propertyRouter.put('/floorforadmin/:floorId', isAuth, isAdmin, async (req, res) => {
+        try {
+            const { floorId } = req.params;
+            const { name, units } = req.body;
+    
+            // Check if the floor exists
+            const floor = await Floor.findById(floorId);
+            if (!floor) {
+                return res.status(404).json({ error: 'Floor not found' });
+            }
+    
+            // Update floor details
+            if (name) floor.name = name;
+            if (units) floor.units = units;
+    
+            await floor.save();
+    
+            res.status(200).json({ message: 'Floor updated successfully' });
+        } catch (error) {
+            console.error('Error updating floor:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+
+    // API endpoint to add a unit to a floor
+propertyRouter.post('/unitforadmin/:floorId/addUnit', isAuth, isAdmin, async (req, res) => {
+    try {
+        const { floorId } = req.params;
+        const {  type, occupied, premiseNo, unitRegNo, unitNo } = req.body;
+
+        // Check if the floor exists
+        const floor = await Floor.findById(floorId);
+        if (!floor) {
+            return res.status(404).json({ error: 'Floor not found' });
+        }
+
+        // Create the unit
+        const unit = new Unit({
+            type,
+            occupied,
+            premiseNo,
+            unitRegNo,
+            unitNo
+        });
+
+        // Save the unit
+        await unit.save();
+
+        // Add the unit to the floor
+        floor.units.push(unit);
+        await floor.save();
+
+        res.status(201).json({ message: 'Unit added to floor successfully', unit });
+    } catch (error) {
+        console.error('Error adding unit to floor:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+propertyRouter.put('/unitforadmin/:floorId/editUnit/:unitId', isAuth, isAdmin, async (req, res) => {
+    try {
+        const { floorId, unitId } = req.params;
+        const { type, occupied, premiseNo,  unitRegNo, unitNo } = req.body;
+
+        // Check if the floor exists
+        const floor = await Floor.findById(floorId);
+        if (!floor) {
+            console.error('Floor not found');
+            return res.status(404).json({ error: 'Floor not found' });
+        }
+
+        // Find the unit by ID
+        const unit = await Unit.findById(unitId);
+        if (!unit) {
+            console.error('Unit not found');
+            return res.status(404).json({ error: 'Unit not found' });
+        }
+
+        // Update the unit fields
+        unit.type = type;
+        unit.occupied = occupied;
+        unit.premiseNo = premiseNo;
+        unit.unitRegNo = unitRegNo;
+        unit.unitNo = unitNo;
+        await unit.save();
+
+        console.log('Unit edited successfully');
+        return res.status(200).json({ message: 'Unit edited successfully' });
+    } catch (error) {
+        console.error('Error editing unit:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+  
+
+
 propertyRouter.get('/allpropertiesforadmin', isAuth, isAdmin, async (req, res) => {
     try {
         const properties = await Property.find()
-            .populate('user', 'name email') // Populate user details
+            .populate('user') // Populate user details
             .populate({
                 path: 'floors', // Populate floors field
                 populate: {
@@ -390,6 +765,39 @@ propertyRouter.get('/allpropertiesforadmin', isAuth, isAdmin, async (req, res) =
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
+    }
+});
+   ////  single property admin
+propertyRouter.get('/singlepropertyforadmin/:propertyId?', isAuth, isAdmin, async (req, res) => {
+    try {
+        const { propertyId } = req.params;
+        if (propertyId) {
+            const property = await Property.findById(propertyId)
+                .populate('user', 'name email contact') // Populate user details
+                .populate({
+                    path: 'floors', // Populate floors field
+                    populate: {
+                        path: 'units' // Populate units field within each floor
+                    }
+                });
+            if (!property) {
+                return res.status(404).json({ error: 'Property not found' });
+            }
+            return res.status(200).json(property);
+        } else {
+            const properties = await Property.find()
+                .populate('user', 'name email') // Populate user details
+                .populate({
+                    path: 'floors', // Populate floors field
+                    populate: {
+                        path: 'units' // Populate units field within each floor
+                    }
+                });
+            return res.status(200).json(properties);
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -458,6 +866,9 @@ propertyRouter.put(
 );
 
 
+
+
+
 ////   Owner Property Routes //// 
 ////   Owner Property Routes //// 
 ////   Owner Property Routes //// 
@@ -473,6 +884,40 @@ propertyRouter.get('/myproperties', isAuth, isOwner, async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Endpoint to get all properties (for owner) with user and floor details populated
+propertyRouter.get('/singlepropertyforowners/:propertyId?', isAuth , async (req, res) => {
+    try {
+        const { propertyId } = req.params;
+        if (propertyId) {
+            const property = await Property.findById(propertyId)
+                .populate('user', 'name email contact') // Populate user details
+                .populate({
+                    path: 'floors', // Populate floors field
+                    populate: {
+                        path: 'units' // Populate units field within each floor
+                    }
+                });
+            if (!property) {
+                return res.status(404).json({ error: 'Property not found' });
+            }
+            return res.status(200).json(property);
+        } else {
+            const properties = await Property.find()
+                .populate('user', 'name email') // Populate user details
+                .populate({
+                    path: 'floors', // Populate floors field
+                    populate: {
+                        path: 'units' // Populate units field within each floor
+                    }
+                });
+            return res.status(200).json(properties);
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal server error' });
     }
 });
 

@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../AuthContext';
-import { Table, Button, Modal, Form } from 'react-bootstrap';
+import { Table, Button, Modal, Form, Row, Col } from 'react-bootstrap';
+import SideBar from '../../Components/SideBar';
+import { AiOutlineDelete } from "react-icons/ai";
+import { FiEdit } from "react-icons/fi";
+import { GrAdd } from "react-icons/gr";
+import Floorsearch from '../../Components/FloorSearch'
+
 
 const AddFloor = () => {
   const { state } = useContext(AuthContext);
@@ -13,6 +19,39 @@ const AddFloor = () => {
   const [editFloorName, setEditFloorName] = useState('');
   const [editFloorId, setEditFloorId] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [show, setShow] = useState(false);
+  const [selectedApartmentIdForDelete, setSelectedApartmentIdForDelete] = useState('');
+  const [selectedFloorIdForDelete, setSelectedFloorIdForDelete] = useState('');
+  const [selectedOwner, setSelectedOwner] = useState('');
+  const [selectedProperty, setSelectedProperty] = useState('');
+  const [selectedFloor, setSelectedFloor] = useState('');
+  const [selectedUnit, setSelectedUnit] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [floors, setFloors] = useState([]);
+  const [units, setUnits] = useState([]);
+  const [owners, setOwners] = useState([]);
+  const [modalFloor, setShowModalFloor] = useState(false)
+  const [selectedPropertyId, setSelectedPropertyId] = useState('');
+
+  // const uniqueID = apartments.find(apartment => apartment._id === selectedApartmentId)
+  // console.log(uniqueID,'selectproperty',apartments)
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+
+  const handlePropertyChange = (property) => {
+    setSelectedProperty(property);
+    const selectedProp = apartments.find(p => p.name === property);
+    if (selectedProp) {
+      setFloors(selectedProp.floors.map(floor => floor.name));
+    }
+    setSelectedFloor('');
+    setSelectedUnit('');
+  };
+
 
   const fetchApartments = async () => {
     try {
@@ -21,7 +60,7 @@ const AddFloor = () => {
           Authorization: `Bearer ${state.user.token}`
         }
       });
-      setApartments(response.data.filter(property => property.propertyType === 'apartments'));
+      setApartments(response.data.filter(property => property.propertyType === 'Apartments'));
     } catch (error) {
       console.error('Error fetching apartments:', error);
     }
@@ -50,28 +89,42 @@ const AddFloor = () => {
       });
       console.log('Floor added:', response.data);
       setShowModal(false);
-      // Fetch apartments again after adding floor
       fetchApartments();
+      setShowModalFloor(false)
     } catch (error) {
       console.error('Error adding floor:', error);
-      // Handle error 
     }
   };
 
-  const handleDeleteFloor = async (apartmentId, floorId) => {
+  const handleDeleteFloor = async () => {
     try {
-      await axios.delete(`/api/properties/floor/${apartmentId}/deleteFloor/${floorId}`, {
-        headers: {
-          Authorization: `Bearer ${state.user.token}`
+      const propertyName = apartments.find(apartment => apartment._id === selectedApartmentId)?.name;
+      console.log(selectedApartmentId, 'selectedApartmentId')
+      const floorName = apartments.find(apartment => apartment._id === selectedApartmentId)
+        ?.floors.find(floor => floor._id === selectedFloorIdForDelete)?.name;
+      console.log(propertyName, 'propertyNamefloorName')
+
+      await axios.put(
+        `/api/properties/floor/${selectedApartmentIdForDelete}/deleteFloor/${selectedFloorIdForDelete}`,
+        { propertyName, floorName },
+        {
+          headers: {
+            Authorization: `Bearer ${state.user.token}`
+          }
         }
-      });
-      // Fetch apartments again after deleting floor
+      );
+
       fetchApartments();
+      setShowDeleteModal(false);
     } catch (error) {
-      console.error('Error deleting floor:', error);
-      // Handle error 
+      console.error('Error marking floor as deleted from property:', error);
     }
   };
+  const handleOpenDeleteModal = (apartmentId, floorId) => {
+    setSelectedApartmentIdForDelete(apartmentId);
+    setSelectedFloorIdForDelete(floorId);
+    setShowDeleteModal(true);
+  }
 
   const handleOpenEditModal = (floorId, floorName) => {
     setEditFloorId(floorId);
@@ -88,11 +141,9 @@ const AddFloor = () => {
       });
       console.log('Floor edited:', response.data);
       setShowEditModal(false);
-      // Fetch apartments again after editing floor
       fetchApartments();
     } catch (error) {
       console.error('Error editing floor:', error);
-      // Handle error 
     }
   };
 
@@ -100,62 +151,105 @@ const AddFloor = () => {
     setSelectedApartmentId(apartmentId);
     setShowModal(true);
   };
-
+  const handleOwnerChange = (owner) => {
+    setSelectedOwner(owner);
+    // Filter properties based on selected owner
+    const ownerProps = apartments.filter(property => property.user.name === owner);
+    // Update ownerProperties state
+    setApartments(ownerProps);
+    // Reset other state variables
+    setFloors([]);
+    setUnits([]);
+    setSelectedProperty('');
+    setSelectedFloor('');
+    setSelectedUnit('');
+  };
   return (
     <div>
-      <h2>Floor Section of Apartments</h2>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Name of Apartment</th>
-            <th>Address</th>
-            <th>Floors</th>
-            <th>Delete Floor</th>
-            <th>Edit Floor</th>
-            <th>Add Floor</th>
-          </tr>
-        </thead>
-        <tbody>
-          {apartments.map(apartment => (
-            <tr key={apartment._id}>
-              <td>{apartment.name}</td>
-              <td>{apartment.address}</td>
-              <td>
-                {apartment.floors.map(floor => (
-                  <div key={floor._id}>
-                    {floor.name}
-                  </div>
-                ))}
-              </td>
-              <td>
-                {apartment.floors.map(floor => (
-                  <div key={floor._id}>
-                    <Button variant="danger" size="sm" onClick={() => handleDeleteFloor(apartment._id, floor._id)}>Delete</Button>
-                  </div>
-                ))}
-              </td>
-              <td>
-                {apartment.floors.map(floor => (
-                  <div key={floor._id}>
-                    <Button variant="primary" size="sm" onClick={() => handleOpenEditModal(floor._id, floor.name)}>Edit</Button>
-                  </div>
-                ))}
-              </td>
-              <td>
-                <Button variant="primary" onClick={() => openModal(apartment._id)}>Add Floor</Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <Row>
+        <Col xs={6} sm={6} md={3} lg={2} xl={2}>
+          <div>
+            <SideBar />
+          </div>
+        </Col>
+        <Col xs={12} sm={12} md={12} lg={10} xl={10} style={{ marginTop: '80px' }} >
+          <Row xs={1} md={2} lg={3}>
+            <Col xs={12} sm={12} md={12} lg={10} xl={10} >
 
-    
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
+              <h2 className='text-center mt-3'>Floor Section of Apartments</h2>
+              <Floorsearch />
+              <div style={{ display: 'flex', justifyContent: 'end' }} className='mb-3' >
+                <Button variant="success" onClick={() => setShowModalFloor(true)} >Add Floor</Button>
+              </div>
+              <Table striped bordered hover responsive className='mb-5'>
+                <thead style={{ backgroundColor: '#005f75' }}>
+                  <tr>
+                    <th style={{ color: '#ffff' }}>Owner</th>
+                    <th style={{ color: '#ffff' }}>Property Type</th>
+                    <th style={{ color: '#ffff' }}>Property Name</th>
+                    <th style={{ color: '#ffff' }}>Location</th>
+                    <th style={{ color: '#ffff' }}>Floor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {apartments.map(apartment => {
+                    let ownerDisplayed = false;
+                    return apartment.floors.map((floor, index) => (
+                      <tr key={floor._id}>
+                        {index === 0 && !ownerDisplayed && (
+                          <td rowSpan={apartment.floors.length}>{apartment.user.name}</td>
+                        )}
+                        <td>{apartment.propertyType}</td>
+                        <td>{apartment.name || apartment.buildingname}</td>
+                        <td>{apartment.address}</td>
+                        <td>
+                          <div key={floor._id} className='mt-3' style={{ display: 'flex', gap: '10px' }}>
+                            {floor.name}
+                            <FiEdit style={{ cursor: 'pointer', fontSize: '15px', color: '#008f00' }} onClick={() => handleOpenEditModal(floor._id, floor.name)} />
+                            <AiOutlineDelete onClick={() => handleOpenDeleteModal(apartment._id, floor._id)} style={{ cursor: 'pointer', fontSize: '15px', color: '#e03c3e' }} />
+                          </div>
+                        </td>
+
+                      </tr>
+                    ));
+                  })}
+                </tbody>
+              </Table>
+
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Header closeButton>
+        </Modal.Header>
+        <Modal.Title style={{ textAlign: 'center', fontSize: '25px' }} className='mt-2' >Are you sure? </Modal.Title>
+        <Modal.Body>
+          <p style={{ textAlign: 'center', fontWeight: '500' }} >Do you really want to delete this floor.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={() => handleDeleteFloor()}>Yes</Button>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>No</Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={modalFloor} onHide={() => setShowModalFloor(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Add Floor</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
+            <Form.Group controlId="selectProperty" className='mb-3'>
+              <Form.Label>Select Property</Form.Label>
+              <Form.Control as="select" value={selectedApartmentId} onChange={(e) => setSelectedApartmentId(e.target.value)}>
+                <option value="">Select Property</option>
+                {apartments.map(property => (
+                  <option key={property._id} value={property._id}>{property.name || property.buildingname}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+
             <Form.Group controlId="floorName">
               <Form.Label>Floor Name</Form.Label>
               <Form.Control type="text" placeholder="Enter floor name" value={floorName} onChange={(e) => setFloorName(e.target.value)} />
@@ -168,7 +262,6 @@ const AddFloor = () => {
         </Modal.Footer>
       </Modal>
 
-   
       <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Floor</Modal.Title>
@@ -191,3 +284,12 @@ const AddFloor = () => {
 };
 
 export default AddFloor;
+
+
+
+
+
+
+
+
+

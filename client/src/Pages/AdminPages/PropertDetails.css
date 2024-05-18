@@ -1,0 +1,12 @@
+.property_detail_image {
+    border: 1px solid #f4f4f4;
+    padding: 120px 80px 80px 80px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+}
+
+.property_detail_image img {
+    width: 350px;
+    height: 250px;
+    object-fit: fill;
+}

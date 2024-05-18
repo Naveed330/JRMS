@@ -6,9 +6,10 @@ import dotenv from "dotenv";
 import path from "path";
 import connectDB from "./config/db.js";
 import userRouter from "./routes/userRoutes.js";
-import testRouter from './routes/testRoutes.js'
 import propertyRouter from "./routes/propertyRoutes.js";
 import tenantRouter from "./routes/tenantRoutes.js";
+import maintenanceRouter from "./routes/maintenanceRoutes.js";
+import administrationfeeRouter from "./routes/administrationfeesRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -29,21 +30,24 @@ app.use(morgan("dev"));
 // Set port
 const PORT = process.env.PORT || 8080;
 
-// Basic route
-app.get('/', (req, res) => {
-  res.send('API is Working. Continue Your Spirits of the application.');
-});
 
 
-// Test Routes
-
-app.use('/api/test', testRouter);
 // API routes
 app.use('/api/users', userRouter);
 app.use('/api/properties', propertyRouter);
 app.use('/api/tenants', tenantRouter);
+app.use('/api/maintenance', maintenanceRouter);
+app.use('/api/adminstrationfees', administrationfeeRouter);
 
 
+// Serve static assets if in production
+if (process.env.NODE_ENV === 'production') {
+  const __dirname = path.resolve();
+  app.use(express.static(path.join(__dirname, './client/build')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './client/build/index.html'));
+  });
+}
 
 
 // Start the server

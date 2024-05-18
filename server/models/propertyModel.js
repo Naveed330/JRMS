@@ -6,9 +6,11 @@ const propertySchema = new Schema({
     name: String,
     user: {
         type: Schema.Types.ObjectId,
+
         ref: 'User',
+        
         validate: {
-            validator: async function(userId) {
+            validator: async function (userId) {
                 const User = mongoose.model('User');
                 const user = await User.findById(userId);
                 return user && user.role === 'owner';
@@ -16,22 +18,48 @@ const propertySchema = new Schema({
             message: 'User does not have owner role.'
         }
     },
+    cname: String,
+    ccontact: String,
+    cemail: String, 
     address: String,
     contactinfo: String,
     propertyImage: String,
     status: {
         type: String,
-        enum: ['enabled', 'disabled'],
-        default: 'enable'
+        enum: ['Enable', 'Disable'],
+        default: 'Enable'
     },
     propertyType: {
         type: String,
-        enum: [ 'apartments', ]
+      
     },
+    municipality: String, 
+    zone: String, 
+    sector: String, 
+    roadName: String, 
+    plotNo: String, 
+    plotAddress: String,
+    onwaniAddress: String, 
+    propertyNo: String, 
+    propertyRegistrationNo: String, 
     floors: [{
         type: Schema.Types.ObjectId,
         ref: 'Floor'
-    }]
+    }],
+  
+    city: String,
+    area: String,
+    bondtype: String,
+    bondno: String,
+    bonddate: String,
+    govermentalno: String,
+    pilotno: String,
+    buildingname: String,
+    buildingnamebuildingnamebuildingname: String,
+    propertytype: String,
+    description: String,
+    propertyno:String,
+    joveracommission:Number,
 });
 
 const Property = mongoose.model('Property', propertySchema);

@@ -30,14 +30,44 @@ const upload = multer({ storage });
 // Middleware for Cloudinary image upload
 const uploadToCloudinary = upload.single('picture');
 
+userRouter.put(
+    '/edit-pass/:id',
+    isAuth,
+    isSuperAdmin,
+    expressAsyncHandler(async (req, res) => {
+        try {
+            const userId = req.params.id;
+            const { newPassword } = req.body;
+
+            const user = await User.findById(userId);
+            if (!user) {
+                return res.status(404).send({ message: 'User not found' });
+            }
+
+            // If newPassword is provided, hash and update password
+            if (newPassword) {
+                const hashedPassword = bcrypt.hashSync(newPassword, 8);
+                user.password = hashedPassword;
+            }
+
+            // Save the updated user
+            const updatedUser = await user.save();
+
+            res.status(200).send(updatedUser);
+        } catch (error) {
+            console.error('Error editing user:', error);
+            res.status(500).send({ message: 'Error editing user' });
+        }
+    })
+);
 
 
 
 userRouter.post(
     '/register',
-    uploadToCloudinary, isAuth, isSuperAdmin,
+    uploadToCloudinary,
     expressAsyncHandler(async (req, res) => {
-        const { name, email, password, role } = req.body;
+        const { name, email, password, role, contact, othercontact, address, nationality, emid } = req.body;
 
         // Ensure that a picture was uploaded
         if (!req.file) {
@@ -53,7 +83,12 @@ userRouter.post(
                 email,
                 password: hashedPassword,
                 picture,
-                role
+                role,
+                contact,
+                othercontact,
+                address,
+                nationality,
+                emid,
             });
 
             const user = await newUser.save();
@@ -64,6 +99,11 @@ userRouter.post(
                 email: user.email,
                 role: user.role,
                 picture: user.picture,
+                contact: user.contact,
+                othercontact: user.othercontact,
+                address: user.address,
+                nationality: user.nationality,
+                emid: user.emid,
                 token: generateToken(user),
             });
         } catch (error) {
@@ -177,29 +217,29 @@ userRouter.post(
             to: email,
             subject: 'Password Reset OTP',
             html: `
-    <html>
-      <head>
-      </head>
-      <body>
-      <div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
-  <div style="margin:50px auto;width:70%;padding:20px 0">
-    <div style="border-bottom:1px solid #eee">
-      <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Jovera Groups</a>
-    </div>
-    <p style="font-size:1.1em">Hi,</p>
-    <p>Thank you for choosing Jovera Groups  Use the following OTP to complete your Sign Up procedures. OTP is valid for 2 hours</p>
-    <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
-    <p style="font-size:0.9em;">Regards,<br />Your Brand</p>
-    <hr style="border:none;border-top:1px solid #eee" />
-    <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-      <p>Jovera Groups </p>
-      <p>Abu Dhabi </p>
-      <p>UAE</p>
-    </div>
-  </div>
-</div>
-      </body>
-    </html>
+                        <html>
+                        <head>
+                        </head>
+                        <body>
+                        <div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+                    <div style="margin:50px auto;width:70%;padding:20px 0">
+                        <div style="border-bottom:1px solid #eee">
+                        <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Jovera Groups</a>
+                        </div>
+                        <p style="font-size:1.1em">Hi,</p>
+                        <p>Thank you for choosing Jovera Groups  Use the following OTP to complete your Sign Up procedures. OTP is valid for 2 hours</p>
+                        <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
+                        <p style="font-size:0.9em;">Regards,<br />Your Brand</p>
+                        <hr style="border:none;border-top:1px solid #eee" />
+                        <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
+                        <p>Jovera Groups </p>
+                        <p>Abu Dhabi </p>
+                        <p>UAE</p>
+                        </div>
+                    </div>
+                    </div>
+                        </body>
+                        </html>
   `,
         };
 
@@ -264,6 +304,16 @@ userRouter.get(
         res.send(users);
     })
 );
+
+userRouter.get(
+    '/allusersforadmin',
+    isAuth,
+    isAdmin,
+    expressAsyncHandler(async (req, res) => {
+        const users = await User.find({});
+        res.send(users);
+    })
+);
 userRouter.put(
     '/edit-user/:id',
     isAuth,
@@ -271,7 +321,7 @@ userRouter.put(
     expressAsyncHandler(async (req, res) => {
         try {
             const userId = req.params.id;
-            const { name, email, role } = req.body;
+            const { name, email, role, contact, othercontact, address, nationality } = req.body;
 
             const user = await User.findById(userId);
             if (!user) {
@@ -281,6 +331,10 @@ userRouter.put(
             user.name = name;
             user.email = email;
             user.role = role;
+            user.contact = contact;
+            user.othercontact = othercontact;
+            user.address = address;
+            user.nationality = nationality;
 
             const updatedUser = await user.save();
 
@@ -338,11 +392,69 @@ userRouter.get(
     })
 );
 
+
+
+
+////////Admin Routes /////////
+////////Admin Routes /////////
+////////Admin Routes /////////
+
+
+userRouter.post(
+    '/registerforadmin',
+    uploadToCloudinary, isAuth, isAdmin,
+    expressAsyncHandler(async (req, res) => {
+        const { name, email, password, role, contact, othercontact, address, nationality, emid } = req.body;
+
+        // Ensure that a picture was uploaded
+        if (!req.file) {
+            return res.status(400).send({ message: 'Please upload a profile picture' });
+        }
+
+        const picture = req.file.path;
+        const hashedPassword = bcrypt.hashSync(password, 8);
+
+        try {
+            const newUser = new User({
+                name,
+                email,
+                password: hashedPassword,
+                picture,
+                role,
+                contact,
+                othercontact,
+                address,
+                nationality,
+                emid,
+            });
+
+            const user = await newUser.save();
+
+            res.status(201).send({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                picture: user.picture,
+                contact: user.contact,
+                othercontact: user.othercontact,
+                address: user.address,
+                nationality: user.nationality,
+                emid: user.emid,
+                token: generateToken(user),
+            });
+        } catch (error) {
+            console.error('Error registering user:', error);
+            res.status(500).send({ message: 'Error registering user' });
+        }
+    })
+);
+
 // Get list of all owners (accessible only to  admin)
 userRouter.get(
     '/all-owners-for-admin',
-   isAuth, isAdmin,
-    
+    isAuth, isAdmin,
+
     expressAsyncHandler(async (req, res) => {
         try {
             const owners = await User.find({ role: 'owner' });

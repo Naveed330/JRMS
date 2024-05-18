@@ -1,21 +1,21 @@
 import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
+const today = new Date(); // Get today's date
+
 
 const tenantSchema = new Schema({
     name: {
         type: String,
-        required: true
     },
     email: {
         type: String,
-        required: true
     },
-    contact: {
-        type: String,
-        required: true
-    },
+    contact: String,
     nid: String,
+    nationality: String,
+    licenseno: String,
+    companyname: String,
     passport: String,
     address: String,
     ownerId: {
@@ -23,27 +23,46 @@ const tenantSchema = new Schema({
         ref: 'User',
         required: true
     },
-    property: [{
+    property: {
         type: Schema.Types.ObjectId,
         ref: 'Property'
-    }],
+    },
     floorId: {
         type: Schema.Types.ObjectId,
         ref: 'Floor'
     },
-    unitId: {
+    unitId: [{
         type: Schema.Types.ObjectId,
         ref: 'Unit'
-    },
+    }],
     propertyType: {
         type: String,
-        enum: ['apartments'],
+
         required: true
     },
     contractInfo: {
         startingDate: {
             type: Date,
             required: true
+        },
+        securitydeposite: String,
+        depositecash: Number,
+        depositechk: String,
+        depositeamount: Number,
+        depositeDate: {
+            type: Date
+        },
+        graceperiod: String,
+        numberofoccupants: String,
+        Waterandelecbill: {
+            type: String,
+
+
+        },
+        pet: Boolean,
+        usage: {
+            type: String,
+
         },
         monthsDuration: {
             type: Number,
@@ -59,7 +78,6 @@ const tenantSchema = new Schema({
         },
         VAT: {
             type: Number,
-            required: true
         },
         otherCost: Number,
         parking: Boolean,
@@ -71,29 +89,44 @@ const tenantSchema = new Schema({
         },
         paidAmount: Number,
         bank: String,
-        totalChecks: Number,
+        totalChecks: {
+            type: Number,
+            required: true
+        },
         pdc: [{
             checkNumber: String,
+            isTransfter: { type: Boolean, default: false },
             bank: String,
             date: Date,
             amount: Number,
+            pdcstatus: { type: String, default: 'ontime' },
+            submissiondate: { type: Date, default: null },
+            type: { type: String, default: 'full' },
+            remarks: { type: String, default: null }
         }],
         payment: [{
-            paymentmethod : String,
-            paymentstatus : String,
+            paymentmethod: String,
+            paymentstatus: String,
             amount: Number,
-            checkorinvoice:String, 
+            bank: String,
+            checkorinvoice: String,
             date: Date,
+            submissiondate: { type: Date, default: today },
+            collectiondate: { type: Date, default: null },
+            type: { type: String, default: 'full' },
+            remarks: { type: String, default: null }
         }]
-    }, 
-
+    },
     status: {
         type: String,
-        enum: ['Active', 'Inactive'],
+        enum: ['Active', 'Case'],
         default: 'Active'
     },
-   
-});
+    contractNo: {
+        type: String,
+        unique: true,
+    },
+}, { timestamps: true });
 
 const Tenant = mongoose.model('Tenant', tenantSchema);
 

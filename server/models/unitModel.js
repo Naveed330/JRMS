@@ -3,15 +3,18 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const unitSchema = new Schema({
-    name: String,
     type: {
         type: String,
-        enum: ['studio', '1BHK', '2BHK', '3BHK', 'penthouse'] 
+      //  enum: ['Studio', '1BHK', '2BHK', '3BHK', 'Penthouse','Office'] 
     },
     occupied: {
         type: Boolean,
         default: false
-    }
+    },
+    premiseNo: String,
+ 
+    unitRegNo: String,
+    unitNo: String
 });
 
 const Unit = mongoose.model('Unit', unitSchema);
